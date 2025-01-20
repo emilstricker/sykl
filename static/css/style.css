@@ -1,0 +1,104 @@
+:root {
+    --sykl-green: #4A7C59;
+    --sykl-beige: #F5F1E9;
+    --sykl-brown: #8B7355;
+}
+
+body {
+    background-color: var(--sykl-beige);
+    font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+}
+
+.card {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: var(--sykl-green);
+    color: white;
+    padding: 20px;
+    border-bottom: none;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 2em;
+    text-align: center;
+}
+
+.card-body {
+    padding: 30px;
+    background-color: white;
+}
+
+.form-label {
+    color: var(--sykl-brown);
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--sykl-green);
+    box-shadow: 0 0 0 0.2rem rgba(74, 124, 89, 0.25);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.btn-primary {
+    background-color: var(--sykl-green);
+    border-color: var(--sykl-green);
+    padding: 12px 30px;
+    font-size: 1.1em;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #3A6349;
+    border-color: #3A6349;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.header-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+/* Add some playful decorative elements */
+.card::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px solid var(--sykl-green);
+    border-radius: 20px;
+    z-index: -1;
+}

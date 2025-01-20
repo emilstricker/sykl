@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYKL Opgaveark Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="header-container">
+                            <img src="{{ url_for('static', filename='images/sykl-logo-300x262.png') }}" alt="SYKL Logo" class="logo">
+                            <h2>SYKL Opgaveark Generator</h2>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" id="worksheetForm">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="opgave_number" class="form-label">Opgavenummer</label>
+                                    <input type="number" class="form-control" id="opgave_number" name="opgave_number" required 
+                                           min="1" value="1" placeholder="F.eks. '1'">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sykl_del_type" class="form-label">SYKL-DEL Type</label>
+                                    <select class="form-control" id="sykl_del_type" name="sykl_del_type" required>
+                                        <option value="A">SYKL-DEL A</option>
+                                        <option value="B">SYKL-DEL B</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="title" class="form-label">Opgave Titel</label>
+                                <input type="text" class="form-control" id="title" name="title" required 
+                                       placeholder="F.eks. 'Hvor mange perler?'">
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="materials" class="form-label">Materialer <span class="text-muted">(valgfrit)</span></label>
+                                <input type="text" class="form-control" id="materials" name="materials"
+                                       placeholder="F.eks. 'Perleplader og perler'">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="main_question" class="form-label">Hovedopgave</label>
+                                <textarea class="form-control" id="main_question" name="main_question" rows="3" required
+                                          placeholder="Beskriv hovedopgaven her..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="sykl_del_a" class="form-label">SYKL-DEL <span class="sykl-del-letter">A</span></label>
+                                <textarea class="form-control" id="sykl_del_a" name="sykl_del_a" rows="3" required
+                                          placeholder="Skriv delspørgsmål her..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="bullet_points" class="form-label">Punkter <span class="text-muted">(valgfrit - én per linje)</span></label>
+                                <textarea class="form-control" id="bullet_points" name="bullet_points" rows="3"
+                                          placeholder="Skriv punkter her, én per linje..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="tips_1" class="form-label">MATEMA-TIPS <span class="opgave-number">1</span>.1 <span class="text-muted">(valgfrit)</span></label>
+                                <input type="text" class="form-control" id="tips_1" name="tips_1"
+                                       placeholder="Første tip til eleverne...">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="tips_2" class="form-label">MATEMA-TIPS <span class="opgave-number">1</span>.2 <span class="text-muted">(valgfrit)</span></label>
+                                <input type="text" class="form-control" id="tips_2" name="tips_2"
+                                       placeholder="Andet tip til eleverne...">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="tips_3" class="form-label">MATEMA-TIPS <span class="opgave-number">1</span>.3 <span class="text-muted">(valgfrit)</span></label>
+                                <input type="text" class="form-control" id="tips_3" name="tips_3"
+                                       placeholder="Tredje tip til eleverne...">
+                            </div>
+
+                            <div class="row mt-5">
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-secondary w-100 mb-2" onclick="exportToJson()">
+                                        Gem som JSON
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="jsonFileInput" class="btn btn-secondary w-100 mb-2">
+                                        Importer JSON
+                                        <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="importFromJson(this)">
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                                        Generer PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update the opgave number in MATEMA-TIPS labels
+        document.getElementById('opgave_number').addEventListener('input', function(e) {
+            const number = e.target.value || '1';
+            document.querySelectorAll('.opgave-number').forEach(span => {
+                span.textContent = number;
+            });
+        });
+
+        // Update SYKL-DEL letter in label
+        document.getElementById('sykl_del_type').addEventListener('change', function(e) {
+            document.querySelectorAll('.sykl-del-letter').forEach(span => {
+                span.textContent = e.target.value;
+            });
+        });
+
+        // Export form data to JSON
+        function exportToJson() {
+            const formData = new FormData(document.getElementById('worksheetForm'));
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+            
+            const dataStr = JSON.stringify(jsonData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'sykl_opgave_' + formData.get('opgave_number') + '.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        // Import JSON data to form
+        function importFromJson(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const jsonData = JSON.parse(e.target.result);
+                        Object.keys(jsonData).forEach(key => {
+                            const element = document.getElementById(key);
+                            if (element) {
+                                element.value = jsonData[key];
+                                if (key === 'opgave_number' || key === 'sykl_del_type') {
+                                    element.dispatchEvent(new Event('input'));
+                                    element.dispatchEvent(new Event('change'));
+                                }
+                            }
+                        });
+                    } catch (error) {
+                        alert('Error reading JSON file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+    </script>
+</body>
+</html>
