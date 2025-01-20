@@ -56,10 +56,10 @@ def create_pdf(opgave_number, title, materials, main_question, sykl_del_type, sy
     doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
-        topMargin=50,
-        leftMargin=50,
-        rightMargin=50,
-        bottomMargin=50
+        topMargin=40,
+        leftMargin=40,
+        rightMargin=40,
+        bottomMargin=40
     )
     
     # Define colors
@@ -132,26 +132,26 @@ def create_pdf(opgave_number, title, materials, main_question, sykl_del_type, sy
     # Add logo
     logo_path = os.path.join(app.static_folder, 'images', 'sykl-logo-300x262.png')
     if os.path.exists(logo_path):
-        img = Image(logo_path, width=60, height=52)  # Scale the logo to a reasonable size
-        img.hAlign = 'CENTER'  # Center the image
+        img = Image(logo_path, width=50, height=44)  # Slightly smaller logo
+        img.hAlign = 'CENTER'
         story.append(img)
-        story.append(Spacer(1, 10))
+        story.append(Spacer(1, 5))  # Reduced space after logo
     
     # Add title
     story.append(Paragraph(f"MATEMATIK • OPGAVE {opgave_number}", styles['MainTitle']))
     story.append(Paragraph(title, styles['SubTitle']))
-    story.append(Spacer(1, 20))
+    story.append(Spacer(1, 10))  # Reduced space after title
     
     # Add materials if provided
     if materials:
         story.append(Paragraph(f"<b>Materialer:</b> {materials}", styles['BodyText']))
-        story.append(Spacer(1, 20))
+        story.append(Spacer(1, 10))  # Reduced space after materials
     
     # Add main question
     story.append(Paragraph(main_question, styles['BodyText']))
     
-    # Add space for graphics (200 pixels height)
-    story.append(Spacer(1, 150))
+    # Add space for graphics (reduced space)
+    story.append(Spacer(1, 80))  # Reduced from 150
     
     # Add SYKL-DEL A or B
     story.append(Paragraph(f"<b>SYKL-DEL {sykl_del_type}:</b>", styles['Heading']))
@@ -164,11 +164,11 @@ def create_pdf(opgave_number, title, materials, main_question, sykl_del_type, sy
             if point.strip():
                 bullet_list.append(Paragraph(f"• {point.strip()}", styles['BulletPoint']))
         if bullet_list:
-            story.append(Spacer(1, 10))
+            story.append(Spacer(1, 5))  # Reduced space before bullets
             for bullet in bullet_list:
                 story.append(bullet)
     
-    story.append(Spacer(1, 30))
+    story.append(Spacer(1, 20))  # Reduced space before MATEMA-TIPS
     
     # Add tips if provided in a rounded box
     if any([tips_1, tips_2, tips_3]):
@@ -181,11 +181,11 @@ def create_pdf(opgave_number, title, materials, main_question, sykl_del_type, sy
         if tips_3:
             tips_content.append(Paragraph(f"<b>{opgave_number}.3:</b> {tips_3}", styles['Tips']))
         
-        # Calculate height based on content
-        box_height = 140  # Increased base height to account for extra spacing
-        if tips_1: box_height += 25
-        if tips_2: box_height += 25
-        if tips_3: box_height += 25
+        # Calculate height based on content (reduced heights)
+        box_height = 100  # Reduced base height
+        if tips_1: box_height += 20
+        if tips_2: box_height += 20
+        if tips_3: box_height += 20
         
         story.append(RoundedBox(
             width=doc.width,
