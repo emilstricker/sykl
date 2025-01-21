@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_file, render_template
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Image, Table, TableStyle, ListFlowable, ListItem
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Image, Table, TableStyle, ListFlowable, ListItem, Flowable
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from io import BytesIO
 import os
@@ -12,6 +12,9 @@ import traceback
 from google.cloud import translate
 import google.generativeai as palm
 from google.oauth2.credentials import Credentials
+from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
@@ -80,45 +83,37 @@ chat_history = [
     {"role": "model", "parts": ["Jeg vil hjælpe med at generere opgaveark i det ønskede format med både SYKL-DEL A og B versioner. Jeg vil sørge for at opgaverne er på dansk, alderstilpassede og har en naturlig progression i sværhedsgrad mellem de to versioner."]}
 ]
 
-class RoundedBox:
-    def __init__(self, width, height, content_list, padding=10, radius=10, background_color='white'):
+class RoundedBox(Flowable):
+    def __init__(self, width, height=None, content="", padding=10, radius=10, background_color='#4A7C59'):
+        Flowable.__init__(self)
         self.width = width
-        self.height = height
-        self.content_list = content_list
+        self.content = content
         self.padding = padding
         self.radius = radius
         self.background_color = background_color
-
+        
+        # Calculate height based on content if not specified
+        if height is None:
+            # Rough estimation of height based on content length and width
+            content_lines = len(content) / (width / 10)  # Approximate characters per line
+            self.height = max(50, content_lines * 20 + 2 * padding)
+        else:
+            self.height = height
+    
     def draw(self):
         # Draw rounded rectangle
-        self.canv.saveState()
-        
-        # Draw background
-        p = self.canv.beginPath()
-        p.roundRect(0, 0, self.width, self.height, self.radius)
         self.canv.setFillColor(self.background_color)
-        self.canv.setStrokeColor(self.background_color)  # Make border same as background
-        self.canv.setLineWidth(1)
-        self.canv.drawPath(p, fill=1, stroke=1)
+        self.canv.roundRect(0, 0, self.width, self.height, self.radius, fill=1)
         
-        # Draw content
-        y = self.height - self.padding
+        # Add text
+        self.canv.setFillColor('white')
+        self.canv.setFont('ArialRoundedMTBold', 14)
         
-        # Calculate total content height
-        total_height = 0
-        for content in self.content_list:
-            content.wrapOn(self.canv, self.width - 2*self.padding, y)
-            total_height += content.height + 5  # 5 points spacing between items
-        
-        # Start drawing from top, centered vertically if there's extra space
-        y = self.height - self.padding - (self.height - 2*self.padding - total_height)/2
-        
-        for content in self.content_list:
-            content.wrapOn(self.canv, self.width - 2*self.padding, y)
-            content.drawOn(self.canv, self.padding, y - content.height)
-            y -= content.height + 5  # 5 points spacing between items
-        
-        self.canv.restoreState()
+        # Draw text with padding
+        text_object = self.canv.beginText(self.padding, self.height - self.padding - 14)
+        for line in self.content.split('\n'):
+            text_object.textLine(line.strip())
+        self.canv.drawText(text_object)
 
 def split_bullet_points(bullet_points):
     """Split bullet points that are separated by either newlines or dots"""
@@ -149,95 +144,87 @@ def create_pdf(worksheet_data):
     doc = SimpleDocTemplate(
         buffer,
         pagesize=letter,
-        rightMargin=30,
-        leftMargin=30,
-        topMargin=20,
-        bottomMargin=20
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=30,
+        bottomMargin=30
     )
     
     # Define colors
-    sykl_green = 'green'  # Dark green for headers
+    sykl_green = '#4A7C59'  # Dark green for headers
+    
+    # Register Arial Rounded MT Bold font if available
+    pdfmetrics.registerFont(TTFont('ArialRoundedMTBold', 'static/fonts/ARLRDBD.TTF'))
     
     # Define styles
     styles = getSampleStyleSheet()
     
-    # Header style (MATEMATIK OPGAVEARK)
+    # Header style
     header_style = ParagraphStyle(
         'CustomHeader',
         parent=styles['Heading1'],
-        fontSize=14,
+        fontSize=24,
         textColor='black',
-        spaceAfter=5,
+        spaceAfter=10,
         alignment=1,  # Center alignment
-        fontName='Helvetica'
+        fontName='ArialRoundedMTBold'
     )
     
-    # Title style (e.g. "HVOR MANGE PERLER?")
+    # Title style
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=20,
+        fontSize=28,
         textColor=sykl_green,
-        spaceAfter=10,
-        fontName='Helvetica-Bold'
+        spaceAfter=15,
+        fontName='ArialRoundedMTBold'
     )
     
-    # Section header style (e.g. "SYKL-DEL A:")
-    section_style = ParagraphStyle(
-        'SectionHeader',
+    # Subtitle style
+    subtitle_style = ParagraphStyle(
+        'CustomSubtitle',
         parent=styles['Heading2'],
-        fontSize=14,
+        fontSize=18,
         textColor=sykl_green,
-        spaceBefore=5,
-        spaceAfter=3,
-        fontName='Helvetica-Bold'
+        spaceBefore=10,
+        spaceAfter=5,
+        fontName='ArialRoundedMTBold'
     )
     
     # Normal text style
     normal_style = ParagraphStyle(
         'CustomNormal',
         parent=styles['Normal'],
-        fontSize=12,
-        spaceAfter=3,
-        leading=16,
+        fontSize=14,
+        spaceAfter=5,
+        leading=18,
         fontName='Helvetica'
     )
     
-    # Bullet point style
-    bullet_style = ParagraphStyle(
-        'CustomBullet',
-        parent=styles['Normal'],
-        fontSize=12,
-        leftIndent=20,
-        spaceAfter=3,
-        leading=16,
-        fontName='Helvetica'
-    )
-    
-    # Tips box style
+    # Tips text style
     tips_style = ParagraphStyle(
         'CustomTips',
         parent=styles['Normal'],
-        fontSize=12,
+        fontSize=14,
         textColor='white',
-        spaceAfter=2,
-        leading=14,
-        fontName='Helvetica'
+        spaceAfter=3,
+        leading=16,
+        fontName='ArialRoundedMTBold'
     )
     
-    # Story (content)
     story = []
     
     # Add logo
     logo_path = os.path.join('static', 'images', 'sykl-logo-300x262.png')
     if os.path.exists(logo_path):
-        logo = Image(logo_path, width=20, height=17.5)
+        logo = Image(logo_path, width=60, height=52.4)  # Increased size
         story.append(logo)
+        story.append(Spacer(1, 10))
     
     # Header
-    header_text = 'MATEMATIK<br/><font color="green" size="16">OPGAVEARK</font>'
+    header_text = 'MATEMATIK<br/><font color="%s" size="20">OPGAVEARK</font>' % sykl_green
     story.append(Paragraph(header_text, header_style))
-    story.append(Spacer(1, 5))
+    story.append(Spacer(1, 10))
     
     # Title
     story.append(Paragraph(worksheet_data['title'].upper(), title_style))
@@ -246,7 +233,7 @@ def create_pdf(worksheet_data):
     story.append(Paragraph(f"<b>Materialer:</b> {worksheet_data['materials']}", normal_style))
     
     # SYKL-DEL section
-    story.append(Paragraph(f"SYKL-DEL {worksheet_data['sykl_del_type']}:", section_style))
+    story.append(Paragraph(f"SYKL-DEL {worksheet_data['sykl_del_type']}:", subtitle_style))
     
     # Main task description
     description = worksheet_data['sykl_del_a'].replace('\\n', '<br/>')
@@ -256,12 +243,12 @@ def create_pdf(worksheet_data):
     if worksheet_data['bullet_points']:
         bullet_points = split_bullet_points(worksheet_data['bullet_points'])
         if bullet_points:
-            items = [ListItem(Paragraph(point, bullet_style)) for point in bullet_points]
+            items = [ListItem(Paragraph(point, normal_style)) for point in bullet_points]
             story.append(ListFlowable(
                 items,
                 bulletType='bullet',
                 start='•',
-                bulletFontSize=12,
+                bulletFontSize=14,
                 leftIndent=20,
                 bulletOffsetY=2
             ))
@@ -284,8 +271,8 @@ def create_pdf(worksheet_data):
                 ('BACKGROUND', (0, 0), (-1, -1), sykl_green),
                 ('TEXTCOLOR', (0, 0), (-1, -1), 'white'),
                 ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-                ('FONTSIZE', (0, 0), (-1, -1), 12),
+                ('FONTNAME', (0, 0), (-1, -1), 'ArialRoundedMTBold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 14),
                 ('TOPPADDING', (0, 0), (-1, -1), 10),
                 ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
                 ('LEFTPADDING', (0, 0), (-1, -1), 15),
@@ -300,31 +287,8 @@ def create_pdf(worksheet_data):
             story.append(Spacer(1, 10))
             story.append(tips_table)
     
-    # Add footer
-    footer_text = f"SYKL • MATEMATIK • 3.-4. KLASSE • KP DK/SYKL"
-    footer_style = ParagraphStyle(
-        'Footer',
-        parent=styles['Normal'],
-        fontSize=8,
-        textColor='black',
-        alignment=1,  # Center
-        spaceBefore=15
-    )
-    story.append(Paragraph(footer_text, footer_style))
-    
-    # Add page number
-    def add_page_number(canvas, doc):
-        canvas.saveState()
-        canvas.setFont('Helvetica', 10)
-        canvas.drawRightString(
-            doc.pagesize[0] - doc.rightMargin,
-            doc.bottomMargin,
-            str(canvas.getPageNumber())
-        )
-        canvas.restoreState()
-    
-    # Build PDF with page numbers
-    doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
+    # Build PDF
+    doc.build(story)
     buffer.seek(0)
     return buffer
 
