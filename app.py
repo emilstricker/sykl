@@ -9,8 +9,9 @@ import json
 import re
 import zipfile
 import traceback
-from google.cloud import translate_v2 as translate
+from google.cloud import translate
 import google.generativeai as palm
+from google.oauth2.credentials import Credentials
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
@@ -360,23 +361,35 @@ def get_credentials():
         raise Exception("API key not found in environment")
     return project_id, api_key
 
+def get_translate_client():
+    """Get translation client with API key authentication."""
+    api_key = os.getenv('GOOGLE_API_KEY')
+    if not api_key:
+        raise Exception("API key not found in environment")
+    
+    credentials = Credentials(token=api_key)
+    client = translate.TranslationServiceClient(credentials=credentials)
+    return client, api_key
+
 def translate_text(text, target_language="da"):
     """Translate text using API key."""
     try:
-        api_key = os.getenv('GOOGLE_API_KEY')
-        if not api_key:
-            raise Exception("API key not found in environment")
+        client, api_key = get_translate_client()
+        project_id = "gen-lang-client-0129661352"
+        location = "global"
+        parent = f"projects/{project_id}/locations/{location}"
         
-        translate_client = translate.Client(credentials=None)
-        translate_client.api_key = api_key
-        
-        result = translate_client.translate(
-            text,
-            target_language=target_language,
-            source_language='en'
+        response = client.translate_text(
+            request={
+                "contents": [text],
+                "target_language_code": target_language,
+                "source_language_code": "en",
+                "parent": parent,
+                "mime_type": "text/plain"
+            }
         )
         
-        return result['translatedText']
+        return response.translations[0].translated_text
     except Exception as e:
         print(f"Translation error: {str(e)}")
         raise Exception(f"Translation error: {str(e)}")
