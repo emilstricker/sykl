@@ -7,7 +7,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Flowable, I
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from io import BytesIO
 import os
-import google.generativeai as genai
+import google.generativeai as palm
 import json
 import re
 import zipfile
@@ -20,7 +20,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 
 # Configure Gemini AI
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+def setup_palm():
+    """Setup PaLM API with API key."""
+    api_key = os.getenv('GOOGLE_API_KEY')
+    if not api_key:
+        raise Exception("API key not found in environment")
+    palm.configure(api_key=api_key)
+
+setup_palm()
 
 # Create the Gemini model
 generation_config = {
@@ -30,7 +37,7 @@ generation_config = {
     "max_output_tokens": 8192,
 }
 
-model = genai.GenerativeModel(
+model = palm.GenerativeModel(
     model_name="gemini-2.0-flash-exp",
     generation_config=generation_config,
 )
@@ -614,6 +621,33 @@ def generate_worksheet():
             
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    try:
+        data = request.get_json()
+        prompt = data.get('prompt', '')
+        
+        # Configure PaLM
+        setup_palm()
+        
+        # Generate content using PaLM
+        completion = palm.generate_text(
+            prompt=prompt,
+            temperature=0.7,
+            max_output_tokens=800,
+        )
+        
+        if completion.result:
+            # Translate the generated content
+            translated_text = translate_text(completion.result)
+            return jsonify({"content": translated_text})
+        else:
+            return jsonify({"error": "No content generated"}), 400
+            
+    except Exception as e:
+        print(f"Error generating content: {str(e)}")
+        return jsonify({"error": f"Error generating content: {str(e)}"}), 500
 
 if __name__ == '__main__':
     try:
