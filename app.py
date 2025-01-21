@@ -1,33 +1,25 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.units import inch, mm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Flowable, Image, Table, TableStyle, ListFlowable, ListItem
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Paragraph
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from io import BytesIO
 import os
-import google.generativeai as palm
 import json
 import re
 import zipfile
 import traceback
-import google.oauth2
-from google.oauth2 import service_account
 from google.cloud import translate_v2 as translate
+import google.generativeai as palm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 
-# Configure Gemini AI
-def setup_palm():
-    """Setup PaLM API with API key."""
-    api_key = os.getenv('GOOGLE_API_KEY')
-    if not api_key:
-        raise Exception("API key not found in environment")
-    palm.configure(api_key=api_key)
-
-setup_palm()
+# Configure PaLM API
+api_key = os.getenv('GOOGLE_API_KEY')
+if not api_key:
+    raise Exception("API key not found in environment")
+palm.configure(api_key=api_key)
 
 # Create the Gemini model
 generation_config = {
@@ -87,9 +79,8 @@ chat_history = [
     {"role": "model", "parts": ["Jeg vil hjælpe med at generere opgaveark i det ønskede format med både SYKL-DEL A og B versioner. Jeg vil sørge for at opgaverne er på dansk, alderstilpassede og har en naturlig progression i sværhedsgrad mellem de to versioner."]}
 ]
 
-class RoundedBox(Flowable):
-    def __init__(self, width, height, content_list, padding=10, radius=10, background_color=colors.white):
-        Flowable.__init__(self)
+class RoundedBox:
+    def __init__(self, width, height, content_list, padding=10, radius=10, background_color='white'):
         self.width = width
         self.height = height
         self.content_list = content_list
@@ -156,15 +147,15 @@ def create_pdf(worksheet_data):
     buffer = BytesIO()
     doc = SimpleDocTemplate(
         buffer,
-        pagesize=A4,
-        rightMargin=30*mm,
-        leftMargin=30*mm,
-        topMargin=20*mm,
-        bottomMargin=20*mm
+        pagesize=letter,
+        rightMargin=30,
+        leftMargin=30,
+        topMargin=20,
+        bottomMargin=20
     )
     
     # Define colors
-    sykl_green = colors.HexColor('#4A7C59')  # Dark green for headers
+    sykl_green = 'green'  # Dark green for headers
     
     # Define styles
     styles = getSampleStyleSheet()
@@ -174,8 +165,8 @@ def create_pdf(worksheet_data):
         'CustomHeader',
         parent=styles['Heading1'],
         fontSize=14,
-        textColor=colors.black,
-        spaceAfter=5*mm,
+        textColor='black',
+        spaceAfter=5,
         alignment=1,  # Center alignment
         fontName='Helvetica'
     )
@@ -186,7 +177,7 @@ def create_pdf(worksheet_data):
         parent=styles['Heading1'],
         fontSize=20,
         textColor=sykl_green,
-        spaceAfter=10*mm,
+        spaceAfter=10,
         fontName='Helvetica-Bold'
     )
     
@@ -196,8 +187,8 @@ def create_pdf(worksheet_data):
         parent=styles['Heading2'],
         fontSize=14,
         textColor=sykl_green,
-        spaceBefore=5*mm,
-        spaceAfter=3*mm,
+        spaceBefore=5,
+        spaceAfter=3,
         fontName='Helvetica-Bold'
     )
     
@@ -206,7 +197,7 @@ def create_pdf(worksheet_data):
         'CustomNormal',
         parent=styles['Normal'],
         fontSize=12,
-        spaceAfter=3*mm,
+        spaceAfter=3,
         leading=16,
         fontName='Helvetica'
     )
@@ -217,7 +208,7 @@ def create_pdf(worksheet_data):
         parent=styles['Normal'],
         fontSize=12,
         leftIndent=20,
-        spaceAfter=3*mm,
+        spaceAfter=3,
         leading=16,
         fontName='Helvetica'
     )
@@ -227,8 +218,8 @@ def create_pdf(worksheet_data):
         'CustomTips',
         parent=styles['Normal'],
         fontSize=12,
-        textColor=colors.white,
-        spaceAfter=2*mm,
+        textColor='white',
+        spaceAfter=2,
         leading=14,
         fontName='Helvetica'
     )
@@ -239,13 +230,13 @@ def create_pdf(worksheet_data):
     # Add logo
     logo_path = os.path.join('static', 'images', 'sykl-logo-300x262.png')
     if os.path.exists(logo_path):
-        logo = Image(logo_path, width=20*mm, height=17.5*mm)
+        logo = Image(logo_path, width=20, height=17.5)
         story.append(logo)
     
     # Header
-    header_text = 'MATEMATIK<br/><font color="#4A7C59" size="16">OPGAVEARK</font>'
+    header_text = 'MATEMATIK<br/><font color="green" size="16">OPGAVEARK</font>'
     story.append(Paragraph(header_text, header_style))
-    story.append(Spacer(1, 5*mm))
+    story.append(Spacer(1, 5))
     
     # Title
     story.append(Paragraph(worksheet_data['title'].upper(), title_style))
@@ -290,7 +281,7 @@ def create_pdf(worksheet_data):
             # Create a table for the tips box
             table_style = TableStyle([
                 ('BACKGROUND', (0, 0), (-1, -1), sykl_green),
-                ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
+                ('TEXTCOLOR', (0, 0), (-1, -1), 'white'),
                 ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
                 ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
                 ('FONTSIZE', (0, 0), (-1, -1), 12),
@@ -305,7 +296,7 @@ def create_pdf(worksheet_data):
             tips_table.setStyle(table_style)
             
             # Add some space before the tips box
-            story.append(Spacer(1, 10*mm))
+            story.append(Spacer(1, 10))
             story.append(tips_table)
     
     # Add footer
@@ -314,9 +305,9 @@ def create_pdf(worksheet_data):
         'Footer',
         parent=styles['Normal'],
         fontSize=8,
-        textColor=colors.black,
+        textColor='black',
         alignment=1,  # Center
-        spaceBefore=15*mm
+        spaceBefore=15
     )
     story.append(Paragraph(footer_text, footer_style))
     
@@ -371,17 +362,24 @@ def get_credentials():
 
 def translate_text(text, target_language="da"):
     """Translate text using API key."""
-    project_id, api_key = get_credentials()
-    translate_client = translate.Client(api_key)
-    
-    result = translate_client.translate(
-        text,
-        target_language=target_language,
-        source_language='en',
-        project_id=project_id
-    )
-    
-    return result['translatedText']
+    try:
+        api_key = os.getenv('GOOGLE_API_KEY')
+        if not api_key:
+            raise Exception("API key not found in environment")
+        
+        translate_client = translate.Client(credentials=None)
+        translate_client.api_key = api_key
+        
+        result = translate_client.translate(
+            text,
+            target_language=target_language,
+            source_language='en'
+        )
+        
+        return result['translatedText']
+    except Exception as e:
+        print(f"Translation error: {str(e)}")
+        raise Exception(f"Translation error: {str(e)}")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -629,7 +627,10 @@ def generate():
         prompt = data.get('prompt', '')
         
         # Configure PaLM
-        setup_palm()
+        api_key = os.getenv('GOOGLE_API_KEY')
+        if not api_key:
+            raise Exception("API key not found in environment")
+        palm.configure(api_key=api_key)
         
         # Generate content using PaLM
         completion = palm.generate_text(
