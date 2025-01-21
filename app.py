@@ -14,7 +14,7 @@ import zipfile
 import traceback
 import google.oauth2
 from google.oauth2 import service_account
-from google.cloud import translate
+from google.cloud import translate_v2 as translate
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
@@ -368,27 +368,20 @@ def get_credentials():
     return None
 
 def translate_text(text, target_language="da"):
-    """Translate text using credentials from environment."""
-    credentials = get_credentials()
-    if not credentials:
-        raise Exception("Credentials not found in environment")
+    """Translate text using API key."""
+    api_key = os.getenv('GOOGLE_API_KEY')
+    if not api_key:
+        raise Exception("API key not found in environment")
     
-    client = translate.TranslationServiceClient(credentials=credentials)
-    project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
-    location = "global"
-    parent = f"projects/{project_id}/locations/{location}"
+    translate_client = translate.Client(api_key)
     
-    response = client.translate_text(
-        request={
-            "parent": parent,
-            "contents": [text],
-            "mime_type": "text/plain",
-            "source_language_code": "en-US",
-            "target_language_code": target_language,
-        }
+    result = translate_client.translate(
+        text,
+        target_language=target_language,
+        source_language='en'
     )
     
-    return response.translations[0].translated_text
+    return result['translatedText']
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
