@@ -356,29 +356,22 @@ def normalize_text(text):
 
 def get_credentials():
     """Get Google Cloud credentials from environment variable."""
-    creds_json = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-    if creds_json:
-        try:
-            creds_dict = json.loads(creds_json)
-            credentials = service_account.Credentials.from_service_account_info(creds_dict)
-            return credentials
-        except Exception as e:
-            print(f"Error loading credentials: {e}")
-            return None
-    return None
-
-def translate_text(text, target_language="da"):
-    """Translate text using API key."""
+    project_id = os.getenv('GOOGLE_CLOUD_PROJECT', 'gen-lang-client-0129661352')
     api_key = os.getenv('GOOGLE_API_KEY')
     if not api_key:
         raise Exception("API key not found in environment")
-    
+    return project_id, api_key
+
+def translate_text(text, target_language="da"):
+    """Translate text using API key."""
+    project_id, api_key = get_credentials()
     translate_client = translate.Client(api_key)
     
     result = translate_client.translate(
         text,
         target_language=target_language,
-        source_language='en'
+        source_language='en',
+        project_id=project_id
     )
     
     return result['translatedText']
