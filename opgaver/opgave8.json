@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "8",
+      "title": "Sportsdagen og Distance",
+      "materials": "Papir, blyant, lommeregner, målebånd, evt. kort over skolegården",
+      "main_question": "Hvordan kan vi udforske og forstå forskellige måder at måle og beskrive afstande på?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "På sportsdagen har forskellige klasser løbet forskellige distancer: 2,5 km, 5/2 km, og 250% af en kilometer. Hvordan kan du undersøge og sammenligne disse distancer? Hvordan kan du visualisere dem, så det bliver nemt at forstå for andre?",
+      "bullet_points": "• Find forskellige måder at vise og sammenligne distancerne på. • Undersøg hvordan du kan omsætte mellem km og m. • Lav din egen kreative måde at vise distancerne på. • Kan du finde et mønster i hvordan tallene hænger sammen?",
+      "tips_1": "Prøv at tegne distancerne på et kort eller en tidslinje",
+      "tips_2": "Kan du finde andre måder at skrive de samme distancer på?",
+      "tips_3": "Hvordan ville du forklare forskellene til en ven?"
+    },
+    {
+      "opgave_number": "8",
+      "title": "Sportsdagen og Distance",
+      "materials": "Papir, blyant, lommeregner, målebånd, evt. kort over skolegården",
+      "main_question": "Hvordan kan vi udforske og forstå forskellige måder at måle og beskrive afstande på?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du og din ven er ved at løbe en rute på 3 km. Du har løbet 0,8 af ruten, og din ven har løbet 4/5. Hvordan kan I undersøge hvem der er nået længst? Hvilke andre måder kunne I bruge til at beskrive hvor langt I er nået?",
+      "bullet_points": "• Undersøg forskellige måder at vise hvor langt I er nået. • Find på kreative måder at sammenligne jeres fremskridt. • Prøv at beskrive distancerne med både brøker, decimaler og procenter. • Kan I finde andre eksempler på tal der betyder det samme?",
+      "tips_1": "Prøv at tegne ruten og markere jeres positioner",
+      "tips_2": "Kan I finde flere måder at skrive de samme distancer på?",
+      "tips_3": "Hvilken måde at vise distancerne på synes I er nemmest at forstå?"
+    }
+  ]
+}

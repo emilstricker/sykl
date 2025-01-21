@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "3",
+      "title": "Vandflasker og Målinger",
+      "materials": "Forskellige vandflasker (0,5L, 0,75L, 1L), målebæger, vand, papir og blyant",
+      "main_question": "Hvordan kan vi udforske og sammenligne forskellige måder at måle væske på?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "Du har forskellige vandflasker og måder at beskrive deres indhold: En er 0,5 liter, en er 3/4 liter, og en er 80% af en liter. Hvordan kan du undersøge og sammenligne mængderne? Hvilke måder at måle på synes du er nemmest at forstå?",
+      "bullet_points": "• Find forskellige måder at måle og sammenligne vandmængderne. • Prøv at vise mængderne på forskellige måder (tegning, tabel, etc.). • Undersøg hvordan du kan omregne mellem de forskellige måleenheder. • Del dine opdagelser med klassen.",
+      "tips_1": "Prøv at bruge målebægeret på forskellige måder",
+      "tips_2": "Kan du finde en måde at vise alle mængderne på samme måde?",
+      "tips_3": "Hvordan ville du forklare forskellen til en ven?"
+    },
+    {
+      "opgave_number": "3",
+      "title": "Vandflasker og Målinger",
+      "materials": "Forskellige vandflasker (0,5L, 0,75L, 1L), målebæger, vand, papir og blyant",
+      "main_question": "Hvordan kan vi udforske og sammenligne forskellige måder at måle væske på?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du og din ven har hver en 1-liters vandflaske. Din flaske er 3/4 fuld, og din vens flaske er 70% fuld. Hvordan kan I undersøge og sammenligne vandmængderne? Hvilken måde at beskrive mængden på synes I er mest praktisk?",
+      "bullet_points": "• Undersøg forskellige måder at måle og sammenligne mængderne. • Prøv at vise det både med brøker og procenter. • Find ud af hvilken måde der er nemmest at forstå. • Kan I finde andre måder at beskrive mængderne på?",
+      "tips_1": "Prøv at bruge målebægeret til at vise mængderne",
+      "tips_2": "Kan I tegne flaskerne og vise mængderne?",
+      "tips_3": "Hvordan ville I forklare det til nogen der ikke kender til brøker og procenter?"
+    }
+  ]
+}

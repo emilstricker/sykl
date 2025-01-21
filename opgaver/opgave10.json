@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "10",
+      "title": "Spilletid og Tidsstyring",
+      "materials": "Papir, blyant, lommeregner, evt. stopur, ur eller timer",
+      "main_question": "Hvordan kan vi udforske og forstå forskellige måder at arbejde med tid på?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "Du har 60 minutter til at spille et spil og vil planlægge din tid mellem forskellige levels. Du vil bruge 0,5 af tiden på level 1, 1/4 på level 2, og 15% på level 3. Hvordan kan du undersøge om du har nok tid? Hvilke andre måder kunne du fordele tiden på?",
+      "bullet_points": "• Find forskellige måder at planlægge og vise tidsfordelingen. • Undersøg hvordan du kan beskrive tid med brøker og procenter. • Eksperimenter med forskellige tidsfordelinger. • Kan du finde et mønster i hvordan tiden fordeles?",
+      "tips_1": "Prøv at lave en kreativ tidslinje eller et ur-diagram",
+      "tips_2": "Kan du finde andre måder at dele tiden op på?",
+      "tips_3": "Hvordan ville du forklare tidsplanen til en medspiller?"
+    },
+    {
+      "opgave_number": "10",
+      "title": "Spilletid og Tidsstyring",
+      "materials": "Papir, blyant, lommeregner, evt. stopur, ur eller timer",
+      "main_question": "Hvordan kan vi udforske og forstå forskellige måder at arbejde med tid på?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du og din ven spiller hver i 40 minutter. Du har brugt 4/5 af din tid, og din ven har brugt 85%. Hvordan kan I undersøge hvem der har mest tid tilbage? Hvilke forskellige måder kan I bruge til at vise og sammenligne tiden?",
+      "bullet_points": "• Undersøg forskellige måder at vise og sammenligne tiden på. • Find kreative måder at illustrere den brugte og resterende tid. • Prøv at bruge både brøker, decimaler og procenter. • Kan I finde andre spændende sammenhænge mellem tallene?",
+      "tips_1": "Prøv at lave en visuel fremstilling af tiden",
+      "tips_2": "Kan I finde flere måder at skrive de samme tider på?",
+      "tips_3": "Hvilken måde at vise tiden på synes I er mest nyttig?"
+    }
+  ]
+}

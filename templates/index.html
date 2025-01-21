@@ -6,6 +6,22 @@
     <title>SYKL Opgaveark Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .bullet-points {
+            margin: 1em 0;
+        }
+        
+        .bullet-points ul {
+            list-style-type: disc;
+            margin: 0;
+            padding-left: 2em;
+        }
+        
+        .bullet-points li {
+            margin: 0.5em 0;
+            line-height: 1.4;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -19,86 +35,176 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <!-- AI Generator Section -->
+                        <div class="ai-section mb-5">
+                            <h4 class="mb-3">Generer med AI</h4>
+                            <div class="form-group mb-3">
+                                <label for="ai_prompt" class="form-label">Beskriv opgaven:</label>
+                                <textarea class="form-control" id="ai_prompt" rows="3" 
+                                    placeholder="F.eks.: Vi skal lære at addere brøker med forskellige nævnere. Måske kan vi bruge pizzaer"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary mb-3" id="generateBtn" onclick="generateWorksheet()">
+                                Generer Opgaveark
+                            </button>
+                            <div id="aiStatus" class="alert alert-info d-none">
+                                Genererer opgaveark...
+                            </div>
+                        </div>
+
+                        <hr class="mb-4">
+
+                        <!-- Manual Form -->
                         <form method="POST" id="worksheetForm">
                             <div class="row mb-4">
                                 <div class="col-md-6">
-                                    <label for="opgave_number" class="form-label">Opgavenummer</label>
-                                    <input type="number" class="form-control" id="opgave_number" name="opgave_number" required 
+                                    <label for="opgave_number_a" class="form-label">Opgavenummer A</label>
+                                    <input type="number" class="form-control" id="opgave_number_a" name="opgave_number_a" required 
                                            min="1" value="1" placeholder="F.eks. '1'">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="sykl_del_type" class="form-label">SYKL-DEL Type</label>
-                                    <select class="form-control" id="sykl_del_type" name="sykl_del_type" required>
+                                    <label for="sykl_del_type_a" class="form-label">SYKL-DEL Type A</label>
+                                    <select class="form-control" id="sykl_del_type_a" name="sykl_del_type_a" required>
                                         <option value="A">SYKL-DEL A</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="title_a" class="form-label">Opgave Titel A</label>
+                                <input type="text" class="form-control" id="title_a" name="title_a" required 
+                                       placeholder="F.eks. 'Hvor mange perler?'">
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="materials_a" class="form-label">Materialer A (valgfrit)</label>
+                                <input type="text" class="form-control" id="materials_a" name="materials_a"
+                                       placeholder="F.eks. 'Perler og snor'">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="main_question_a" class="form-label">Hovedspørgsmål A</label>
+                                <textarea class="form-control" id="main_question_a" name="main_question_a" rows="3" required
+                                          placeholder="Beskriv opgaven..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="sykl_del_a_a" class="form-label">SYKL-DEL Spørgsmål A</label>
+                                <textarea class="form-control" id="sykl_del_a_a" name="sykl_del_a_a" rows="2" required
+                                          placeholder="Skriv spørgsmålet..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="bullet_points_a" class="form-label">Underpunkter A (valgfrit)</label>
+                                <textarea class="form-control" id="bullet_points_a" name="bullet_points_a" rows="3"
+                                          placeholder="Skriv punkter her (et per linje)..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="tips_1_a" class="form-label">MATEMA-TIPS 1.1 A</label>
+                                <input type="text" class="form-control" id="tips_1_a" name="tips_1_a"
+                                       placeholder="Første tip...">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="tips_2_a" class="form-label">MATEMA-TIPS 1.2 A</label>
+                                <input type="text" class="form-control" id="tips_2_a" name="tips_2_a"
+                                       placeholder="Andet tip...">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="tips_3_a" class="form-label">MATEMA-TIPS 1.3 A</label>
+                                <input type="text" class="form-control" id="tips_3_a" name="tips_3_a"
+                                       placeholder="Tredje tip...">
+                            </div>
+
+                            <hr class="mb-4">
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="opgave_number_b" class="form-label">Opgavenummer B</label>
+                                    <input type="number" class="form-control" id="opgave_number_b" name="opgave_number_b" required 
+                                           min="1" value="1" placeholder="F.eks. '1'">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sykl_del_type_b" class="form-label">SYKL-DEL Type B</label>
+                                    <select class="form-control" id="sykl_del_type_b" name="sykl_del_type_b" required>
                                         <option value="B">SYKL-DEL B</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="form-group mb-4">
-                                <label for="title" class="form-label">Opgave Titel</label>
-                                <input type="text" class="form-control" id="title" name="title" required 
+                                <label for="title_b" class="form-label">Opgave Titel B</label>
+                                <input type="text" class="form-control" id="title_b" name="title_b" required 
                                        placeholder="F.eks. 'Hvor mange perler?'">
                             </div>
                             
                             <div class="form-group mb-4">
-                                <label for="materials" class="form-label">Materialer <span class="text-muted">(valgfrit)</span></label>
-                                <input type="text" class="form-control" id="materials" name="materials"
-                                       placeholder="F.eks. 'Perleplader og perler'">
+                                <label for="materials_b" class="form-label">Materialer B (valgfrit)</label>
+                                <input type="text" class="form-control" id="materials_b" name="materials_b"
+                                       placeholder="F.eks. 'Perler og snor'">
                             </div>
 
                             <div class="form-group mb-4">
-                                <label for="main_question" class="form-label">Hovedopgave</label>
-                                <textarea class="form-control" id="main_question" name="main_question" rows="3" required
-                                          placeholder="Beskriv hovedopgaven her..."></textarea>
+                                <label for="main_question_b" class="form-label">Hovedspørgsmål B</label>
+                                <textarea class="form-control" id="main_question_b" name="main_question_b" rows="3" required
+                                          placeholder="Beskriv opgaven..."></textarea>
                             </div>
 
                             <div class="form-group mb-4">
-                                <label for="sykl_del_a" class="form-label">SYKL-DEL <span class="sykl-del-letter">A</span></label>
-                                <textarea class="form-control" id="sykl_del_a" name="sykl_del_a" rows="3" required
-                                          placeholder="Skriv delspørgsmål her..."></textarea>
+                                <label for="sykl_del_a_b" class="form-label">SYKL-DEL Spørgsmål B</label>
+                                <textarea class="form-control" id="sykl_del_a_b" name="sykl_del_a_b" rows="2" required
+                                          placeholder="Skriv spørgsmålet..."></textarea>
                             </div>
 
                             <div class="form-group mb-4">
-                                <label for="bullet_points" class="form-label">Punkter <span class="text-muted">(valgfrit - én per linje)</span></label>
-                                <textarea class="form-control" id="bullet_points" name="bullet_points" rows="3"
-                                          placeholder="Skriv punkter her, én per linje..."></textarea>
+                                <label for="bullet_points_b" class="form-label">Underpunkter B (valgfrit)</label>
+                                <textarea class="form-control" id="bullet_points_b" name="bullet_points_b" rows="3"
+                                          placeholder="Skriv punkter her (et per linje)..."></textarea>
                             </div>
 
                             <div class="form-group mb-4">
-                                <label for="tips_1" class="form-label">MATEMA-TIPS <span class="opgave-number">1</span>.1 <span class="text-muted">(valgfrit)</span></label>
-                                <input type="text" class="form-control" id="tips_1" name="tips_1"
-                                       placeholder="Første tip til eleverne...">
+                                <label for="tips_1_b" class="form-label">MATEMA-TIPS 1.1 B</label>
+                                <input type="text" class="form-control" id="tips_1_b" name="tips_1_b"
+                                       placeholder="Første tip...">
                             </div>
 
                             <div class="form-group mb-4">
-                                <label for="tips_2" class="form-label">MATEMA-TIPS <span class="opgave-number">1</span>.2 <span class="text-muted">(valgfrit)</span></label>
-                                <input type="text" class="form-control" id="tips_2" name="tips_2"
-                                       placeholder="Andet tip til eleverne...">
+                                <label for="tips_2_b" class="form-label">MATEMA-TIPS 1.2 B</label>
+                                <input type="text" class="form-control" id="tips_2_b" name="tips_2_b"
+                                       placeholder="Andet tip...">
                             </div>
 
                             <div class="form-group mb-4">
-                                <label for="tips_3" class="form-label">MATEMA-TIPS <span class="opgave-number">1</span>.3 <span class="text-muted">(valgfrit)</span></label>
-                                <input type="text" class="form-control" id="tips_3" name="tips_3"
-                                       placeholder="Tredje tip til eleverne...">
+                                <label for="tips_3_b" class="form-label">MATEMA-TIPS 1.3 B</label>
+                                <input type="text" class="form-control" id="tips_3_b" name="tips_3_b"
+                                       placeholder="Tredje tip...">
                             </div>
 
-                            <div class="row mt-5">
-                                <div class="col-md-4">
-                                    <button type="button" class="btn btn-secondary w-100 mb-2" onclick="exportToJson()">
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary w-100" onclick="exportSingleWorksheet('a')">
+                                        Eksporter Opgave A
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary w-100" onclick="exportSingleWorksheet('b')">
+                                        Eksporter Opgave B
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary w-100" onclick="exportToJson()">
                                         Gem som JSON
                                     </button>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="jsonFileInput" class="btn btn-secondary w-100 mb-2">
-                                        Importer JSON
-                                        <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="importFromJson(this)">
-                                    </label>
-                                </div>
-                                <div class="col-md-4">
-                                    <button type="submit" class="btn btn-primary w-100 mb-2">
-                                        Generer PDF
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary w-100" onclick="document.getElementById('jsonFileInput').click()">
+                                        Indlæs JSON
                                     </button>
+                                    <input type="file" id="jsonFileInput" style="display: none" onchange="handleFileSelect(this)">
                                 </div>
                             </div>
                         </form>
@@ -109,64 +215,357 @@
     </div>
 
     <script>
-        // Update the opgave number in MATEMA-TIPS labels
-        document.getElementById('opgave_number').addEventListener('input', function(e) {
-            const number = e.target.value || '1';
-            document.querySelectorAll('.opgave-number').forEach(span => {
-                span.textContent = number;
-            });
-        });
+        async function exportWorksheet(worksheetData, formId) {
+            try {
+                console.log('Exporting worksheet:', worksheetData);  // Debug log
+                
+                const response = await fetch('/export', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        worksheet: worksheetData
+                    })
+                });
 
-        // Update SYKL-DEL letter in label
-        document.getElementById('sykl_del_type').addEventListener('change', function(e) {
-            document.querySelectorAll('.sykl-del-letter').forEach(span => {
-                span.textContent = e.target.value;
-            });
-        });
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${error}`);
+                }
 
-        // Export form data to JSON
-        function exportToJson() {
-            const formData = new FormData(document.getElementById('worksheetForm'));
-            const jsonData = {};
-            formData.forEach((value, key) => {
-                jsonData[key] = value;
-            });
-            
-            const dataStr = JSON.stringify(jsonData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = 'sykl_opgave_' + formData.get('opgave_number') + '.json';
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
+                // Get the PDF blob
+                const blob = await response.blob();
+                
+                // Create a link to download the PDF
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sykl_opgave_${worksheetData.opgave_number || '1'}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error('Error exporting worksheet:', error);
+                alert('Der opstod en fejl under eksport af opgavearket: ' + error.message);
+            }
         }
 
-        // Import JSON data to form
-        function importFromJson(input) {
+        async function generateWorksheet() {
+            const prompt = document.getElementById('ai_prompt').value;
+            if (!prompt) {
+                alert('Indtast venligst en beskrivelse af opgaven');
+                return;
+            }
+
+            try {
+                document.getElementById('generateBtn').disabled = true;
+                document.getElementById('generateBtn').textContent = 'Genererer...';
+
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+
+                const data = await response.json();
+                console.log('Generated worksheet data:', data);  // Debug log
+
+                if (data.worksheets && data.worksheets.length === 2) {
+                    // Fill both forms
+                    ['A', 'B'].forEach((type, index) => {
+                        const worksheet = data.worksheets[index];
+                        const suffix = type.toLowerCase();
+                        
+                        // Log the form data being set
+                        console.log(`Setting data for worksheet ${type}:`, worksheet);
+
+                        // Get each form field by its actual ID
+                        const opgaveNumber = document.getElementById(`opgave_number_${suffix}`);
+                        const title = document.getElementById(`title_${suffix}`);
+                        const materials = document.getElementById(`materials_${suffix}`);
+                        const mainQuestion = document.getElementById(`main_question_${suffix}`);
+                        const syklDelType = document.getElementById(`sykl_del_type_${suffix}`);
+                        const syklDelA = document.getElementById(`sykl_del_a_${suffix}`);
+                        const bulletPoints = document.getElementById(`bullet_points_${suffix}`);
+                        const tips1 = document.getElementById(`tips_1_${suffix}`);
+                        const tips2 = document.getElementById(`tips_2_${suffix}`);
+                        const tips3 = document.getElementById(`tips_3_${suffix}`);
+
+                        // Set values with null checks
+                        if (opgaveNumber) opgaveNumber.value = worksheet.opgave_number || '';
+                        if (title) title.value = worksheet.title || '';
+                        if (materials) materials.value = worksheet.materials || '';
+                        if (mainQuestion) mainQuestion.value = worksheet.main_question || '';
+                        if (syklDelType) syklDelType.value = worksheet.sykl_del_type || type;
+                        if (syklDelA) syklDelA.value = worksheet.sykl_del_a || '';
+                        if (bulletPoints) bulletPoints.value = worksheet.bullet_points || '';
+                        if (tips1) tips1.value = worksheet.tips_1 || '';
+                        if (tips2) tips2.value = worksheet.tips_2 || '';
+                        if (tips3) tips3.value = worksheet.tips_3 || '';
+                    });
+                } else {
+                    throw new Error('Ugyldigt svar fra AI');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Der opstod en fejl: ' + error.message);
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').textContent = 'Generer';
+            }
+        }
+
+        async function exportSingleWorksheet(type) {
+            const suffix = type.toLowerCase();
+            const worksheetData = {
+                opgave_number: document.getElementById(`opgave_number_${suffix}`).value || '1',
+                title: document.getElementById(`title_${suffix}`).value || '',
+                materials: document.getElementById(`materials_${suffix}`).value || '',
+                main_question: document.getElementById(`main_question_${suffix}`).value || '',
+                sykl_del_type: type.toUpperCase(),
+                sykl_del_a: document.getElementById(`sykl_del_a_${suffix}`).value || '',
+                bullet_points: document.getElementById(`bullet_points_${suffix}`).value || '',
+                tips_1: document.getElementById(`tips_1_${suffix}`).value || '',
+                tips_2: document.getElementById(`tips_2_${suffix}`).value || '',
+                tips_3: document.getElementById(`tips_3_${suffix}`).value || ''
+            };
+
+            try {
+                console.log('Exporting worksheet:', worksheetData);  // Debug log
+                
+                const response = await fetch('/export', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(worksheetData)  // Send worksheetData directly
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errorMessage;
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        errorMessage = errorJson.error || errorText;
+                    } catch {
+                        errorMessage = errorText;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorMessage}`);
+                }
+
+                // Get the PDF blob
+                const blob = await response.blob();
+                
+                // Create a link to download the PDF
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `opgave_${worksheetData.opgave_number}${suffix}.pdf`;  // Updated filename format
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error('Error exporting worksheet:', error);
+                alert('Der opstod en fejl under eksport af opgavearket: ' + error.message);
+            }
+        }
+
+        // Add event listeners for export buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            ['A', 'B'].forEach(type => {
+                const form = document.getElementById(`worksheet${type}`);
+                const exportBtn = document.getElementById(`export${type}Btn`);
+                
+                if (form && exportBtn) {
+                    exportBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        
+                        // Collect form data
+                        const worksheetData = {
+                            opgave_number: form.opgave_number.value,
+                            title: form.title.value,
+                            materials: form.materials.value,
+                            main_question: form.main_question.value,
+                            sykl_del_type: form.sykl_del_type.value,
+                            sykl_del_a: form.sykl_del_a.value,
+                            bullet_points: form.bullet_points.value,
+                            tips_1: form.tips_1.value,
+                            tips_2: form.tips_2.value,
+                            tips_3: form.tips_3.value
+                        };
+                        
+                        console.log(`Exporting worksheet ${type}:`, worksheetData);  // Debug log
+                        exportWorksheet(worksheetData, `worksheet${type}`);
+                    });
+                }
+            });
+        });
+
+        function exportToJson() {
+            const formDataA = {
+                opgave_number: document.getElementById('opgave_number_a').value,
+                title: document.getElementById('title_a').value,
+                materials: document.getElementById('materials_a').value,
+                main_question: document.getElementById('main_question_a').value,
+                sykl_del_type: 'A',
+                sykl_del_a: document.getElementById('sykl_del_a_a').value,
+                bullet_points: document.getElementById('bullet_points_a').value,
+                tips_1: document.getElementById('tips_1_a').value,
+                tips_2: document.getElementById('tips_2_a').value,
+                tips_3: document.getElementById('tips_3_a').value
+            };
+
+            const formDataB = {
+                opgave_number: document.getElementById('opgave_number_b').value,
+                title: document.getElementById('title_b').value,
+                materials: document.getElementById('materials_b').value,
+                main_question: document.getElementById('main_question_b').value,
+                sykl_del_type: 'B',
+                sykl_del_a: document.getElementById('sykl_del_a_b').value,
+                bullet_points: document.getElementById('bullet_points_b').value,
+                tips_1: document.getElementById('tips_1_b').value,
+                tips_2: document.getElementById('tips_2_b').value,
+                tips_3: document.getElementById('tips_3_b').value
+            };
+            
+            const exportData = {
+                worksheets: [formDataA, formDataB]
+            };
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "sykl_opgave_" + formDataA.opgave_number + ".json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function handleFileSelect(input) {
             const file = input.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
-                        const jsonData = JSON.parse(e.target.result);
-                        Object.keys(jsonData).forEach(key => {
-                            const element = document.getElementById(key);
-                            if (element) {
-                                element.value = jsonData[key];
-                                if (key === 'opgave_number' || key === 'sykl_del_type') {
-                                    element.dispatchEvent(new Event('input'));
-                                    element.dispatchEvent(new Event('change'));
-                                }
-                            }
-                        });
+                        const data = JSON.parse(e.target.result);
+                        const worksheets = data.worksheets || [data];
+                        
+                        // Fill form A
+                        const worksheetA = worksheets.find(w => w.sykl_del_type === 'A') || worksheets[0];
+                        document.getElementById('opgave_number_a').value = worksheetA.opgave_number || '';
+                        document.getElementById('title_a').value = worksheetA.title || '';
+                        document.getElementById('materials_a').value = worksheetA.materials || '';
+                        document.getElementById('main_question_a').value = worksheetA.main_question || '';
+                        document.getElementById('sykl_del_a_a').value = worksheetA.sykl_del_a || '';
+                        document.getElementById('bullet_points_a').value = worksheetA.bullet_points || '';
+                        document.getElementById('tips_1_a').value = worksheetA.tips_1 || '';
+                        document.getElementById('tips_2_a').value = worksheetA.tips_2 || '';
+                        document.getElementById('tips_3_a').value = worksheetA.tips_3 || '';
+
+                        // Fill form B
+                        const worksheetB = worksheets.find(w => w.sykl_del_type === 'B') || worksheets[1];
+                        if (worksheetB) {
+                            document.getElementById('opgave_number_b').value = worksheetB.opgave_number || '';
+                            document.getElementById('title_b').value = worksheetB.title || '';
+                            document.getElementById('materials_b').value = worksheetB.materials || '';
+                            document.getElementById('main_question_b').value = worksheetB.main_question || '';
+                            document.getElementById('sykl_del_a_b').value = worksheetB.sykl_del_a || '';
+                            document.getElementById('bullet_points_b').value = worksheetB.bullet_points || '';
+                            document.getElementById('tips_1_b').value = worksheetB.tips_1 || '';
+                            document.getElementById('tips_2_b').value = worksheetB.tips_2 || '';
+                            document.getElementById('tips_3_b').value = worksheetB.tips_3 || '';
+                        }
+                        
+                        // Update MATEMA-TIPS labels
+                        updateMatemaTipsLabels('a');
+                        updateMatemaTipsLabels('b');
                     } catch (error) {
-                        alert('Error reading JSON file: ' + error.message);
+                        console.error('Error parsing JSON:', error);
+                        alert('Fejl ved indlæsning af JSON-fil');
                     }
                 };
                 reader.readAsText(file);
             }
+        }
+
+        // Update the opgave number in MATEMA-TIPS labels
+        function updateMatemaTipsLabels(type) {
+            const number = document.getElementById(`opgave_number_${type}`).value || '1';
+            document.querySelector(`label[for="tips_1_${type}"]`).textContent = `MATEMA-TIPS ${number}.1`;
+            document.querySelector(`label[for="tips_2_${type}"]`).textContent = `MATEMA-TIPS ${number}.2`;
+            document.querySelector(`label[for="tips_3_${type}"]`).textContent = `MATEMA-TIPS ${number}.3`;
+        }
+
+        // Add event listeners for opgave number changes
+        document.getElementById('opgave_number_a').addEventListener('input', () => updateMatemaTipsLabels('a'));
+        document.getElementById('opgave_number_b').addEventListener('input', () => updateMatemaTipsLabels('b'));
+
+        function displayWorksheet(worksheet, container) {
+            // Clear previous content
+            container.innerHTML = '';
+            
+            // Create worksheet elements
+            const title = document.createElement('h2');
+            title.textContent = worksheet.title;
+            container.appendChild(title);
+            
+            const materials = document.createElement('p');
+            materials.innerHTML = '<strong>Materialer:</strong> ' + worksheet.materials;
+            container.appendChild(materials);
+            
+            const mainQuestion = document.createElement('p');
+            mainQuestion.innerHTML = '<strong>Hovedspørgsmål:</strong> ' + worksheet.main_question;
+            container.appendChild(mainQuestion);
+            
+            const description = document.createElement('p');
+            description.innerHTML = worksheet.sykl_del_a.replace(/\\n/g, '<br>');
+            container.appendChild(description);
+            
+            // Handle bullet points - split on escaped newlines and create proper list
+            const bulletPointsContainer = document.createElement('div');
+            bulletPointsContainer.className = 'bullet-points';
+            const bulletPoints = worksheet.bullet_points.split('\\n');
+            const ul = document.createElement('ul');
+            bulletPoints.forEach(point => {
+                if (point.trim()) {
+                    const li = document.createElement('li');
+                    li.textContent = point.trim().replace(/^•\s*/, '');  // Remove bullet if present
+                    ul.appendChild(li);
+                }
+            });
+            bulletPointsContainer.appendChild(ul);
+            container.appendChild(bulletPointsContainer);
+            
+            // Create tips box
+            const tipsBox = document.createElement('div');
+            tipsBox.className = 'tips-box';
+            const tipsTitle = document.createElement('h3');
+            tipsTitle.textContent = 'Tips';
+            tipsBox.appendChild(tipsTitle);
+            
+            const tipsList = document.createElement('ul');
+            [worksheet.tips_1, worksheet.tips_2, worksheet.tips_3].forEach(tip => {
+                if (tip.trim()) {
+                    const li = document.createElement('li');
+                    li.textContent = tip;
+                    tipsList.appendChild(li);
+                }
+            });
+            tipsBox.appendChild(tipsList);
+            container.appendChild(tipsBox);
         }
     </script>
 </body>

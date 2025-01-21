@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "7",
+      "title": "Lommepenge og Budgettering",
+      "materials": "Lommeregner, papir, blyant, evt. legetøjspenge",
+      "main_question": "Hvordan kan vi fordele penge i forskellige dele?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "Du får 200 kr i lommepenge. Du vil spare 25% op, bruge 40% på sjov og resten på tøj. Undersøg hvor meget du har til hver ting.",
+      "bullet_points": "• Beregn hvor meget 25% af 200 kr er. • Find 40% af 200 kr. • Udregn hvor meget der er tilbage til tøj. • Vis dine udregninger tydeligt.",
+      "tips_1": "Lav en tegning der viser fordelingen",
+      "tips_2": "Prøv at bruge rigtige penge eller legetøjspenge",
+      "tips_3": "Kan du lave et cirkeldiagram?"
+    },
+    {
+      "opgave_number": "7",
+      "title": "Lommepenge og Budgettering",
+      "materials": "Lommeregner, papir, blyant, evt. legetøjspenge",
+      "main_question": "Hvordan kan vi fordele penge i forskellige dele?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Din ven sparer 1/3 op af sine 300 kr i lommepenge. Du sparer 30% op af dine 250 kr. Hvem sparer mest op?",
+      "bullet_points": "• Beregn hvor meget din ven sparer op. • Udregn hvor meget du sparer op. • Sammenlign beløbene. • Vis alle dine udregninger.",
+      "tips_1": "Start med at udregne 1/3 af 300 kr",
+      "tips_2": "Derefter kan du finde 30% af 250 kr",
+      "tips_3": "Kan du forklare hvorfor resultatet bliver som det gør?"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "2",
+      "title": "Rabatkuponer og Procenter",
+      "materials": "Lommeregner, papir, blyant, evt. rigtige rabatkuponer eller reklamer",
+      "main_question": "Hvordan kan vi undersøge og sammenligne forskellige måder at give rabat på?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "I butikken er der tre forskellige måder at give rabat på: procenter (25%), brøker (1/4) og decimaltal (0,25). Hvordan kan du undersøge om de giver samme rabat? Hvad sker der med forskellige priser?",
+      "bullet_points": "• Vælg dine egne priser at teste med. • Undersøg hvordan de forskellige rabatter virker. • Find en måde at vise dine opdagelser på. • Kan du finde et mønster?",
+      "tips_1": "Prøv at starte med nemme tal som 100 kr eller 200 kr",
+      "tips_2": "Hvordan kan du vise sammenhængen mellem de forskellige måder at skrive rabatten på?",
+      "tips_3": "Kan du lave en tegning eller et skema der viser dit resultat?"
+    },
+    {
+      "opgave_number": "2",
+      "title": "Rabatkuponer og Procenter",
+      "materials": "Lommeregner, papir, blyant, evt. rigtige rabatkuponer eller reklamer",
+      "main_question": "Hvordan kan vi undersøge og sammenligne forskellige måder at give rabat på?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du og din ven finder hver jeres rabatkupon i en butik. Din kupon giver 30% rabat, og din vens kupon giver 0,3 i rabat. Hvordan kan I undersøge hvilken kupon der giver den bedste rabat? Hvad sker der med forskellige varer?",
+      "bullet_points": "• Vælg forskellige varer at teste kuponerne på. • Find en måde at sammenligne rabatterne. • Undersøg om der er forskel på dyre og billige varer. • Vis dine opdagelser på en kreativ måde.",
+      "tips_1": "Start med at teste på en vare I begge gerne vil købe",
+      "tips_2": "Prøv at lave en tabel med forskellige priser",
+      "tips_3": "Kan du forklare hvorfor resultatet bliver som det gør?"
+    }
+  ]
+}

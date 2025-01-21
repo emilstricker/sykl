@@ -1,0 +1,28 @@
+{
+    "worksheets": [
+      {
+        "opgave_number": "1",
+        "title": "Pizzeria og Brøker",
+        "materials": "Papir til at tegne pizzaer, saks, lineal, evt. rigtige pizzabakker",
+        "main_question": "Hvordan kan vi sammenligne forskellige pizzastørrelser?",
+        "sykl_del_type": "A",
+        "sykl_del_a": "I pizzeriaet er der forskellige størrelser af pizzaer. En lille pizza er delt i 4 stykker, en mellem i 6 stykker, og en stor i 8 stykker. Hvis du skal servere pizza til din klasse, hvordan kan du sammenligne hvor meget pizza hver person får?",
+        "bullet_points": "• Tegn de forskellige pizzastørrelser. • Marker inddelingerne på hver pizza. • Sammenlign stykkerne fra de forskellige pizzaer. • Skriv størrelsen af hvert stykke som en brøk.",
+        "tips_1": "Prøv at tegne pizzaerne og stykkerne",
+        "tips_2": "Kan du skrive stykkerne som brøker?",
+        "tips_3": "Hvordan kan du sammenligne brøker med forskellige nævnere?"
+      },
+      {
+        "opgave_number": "1",
+        "title": "Pizzeria og Brøker",
+        "materials": "Papir til at tegne pizzaer, saks, lineal, evt. rigtige pizzabakker",
+        "main_question": "Hvordan kan vi sammenligne forskellige pizzastørrelser?",
+        "sykl_del_type": "B",
+        "sykl_del_a": "Din ven har købt en stor pizza og spist 3 stykker. Du har købt en mellem pizza og spist 2 stykker. Hvem har spist mest pizza?",
+        "bullet_points": "• Tegn begge pizzaer med deres inddelinger. • Marker de spiste stykker på hver pizza. • Skriv brøkerne for hvor meget der er spist af hver pizza. • Sammenlign brøkerne.",
+        "tips_1": "Start med at skrive hvor stor en del ét stykke er af hver pizza",
+        "tips_2": "Kan du omskrive brøkerne til decimaler eller procenter?",
+        "tips_3": "Findes der flere måder at sammenligne på?"
+      }
+    ]
+  }

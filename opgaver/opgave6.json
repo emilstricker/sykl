@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "6",
+      "title": "Lagkagen og Cirkelbrøker",
+      "materials": "Cirkelskabeloner, saks, papir, blyant, passer",
+      "main_question": "Hvordan kan vi udforske og eksperimentere med forskellige måder at dele en cirkel op?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "Du skal holde fødselsdag og vil gerne udforske forskellige måder at dele en lagkage mellem dine gæster. Hvordan kan du undersøge forskellige måder at dele kagen på, så alle får lige meget? Hvordan kan du beskrive størrelsen af stykkerne på forskellige måder?",
+      "bullet_points": "• Undersøg forskellige måder at dele en cirkel i lige store dele. • Find kreative måder at vise og beskrive hver persons del. • Prøv at bruge både brøker, decimaler og procenter. • Del dine opdagelser med klassen.",
+      "tips_1": "Prøv at klippe cirkler i papir og eksperimenter med foldning",
+      "tips_2": "Kan du finde et mønster i hvordan delene bliver mindre?",
+      "tips_3": "Hvordan ville du forklare det til nogen der aldrig har delt en kage før?"
+    },
+    {
+      "opgave_number": "6",
+      "title": "Lagkagen og Cirkelbrøker",
+      "materials": "Cirkelskabeloner, saks, papir, blyant, passer",
+      "main_question": "Hvordan kan vi udforske og eksperimentere med forskellige måder at dele en cirkel op?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du har to lagkager til et arrangement. Den ene er delt i 12 stykker, den anden i 16 stykker. Hvordan kan du undersøge og sammenligne forskellige antal stykker fra hver kage? Hvornår får man samme mængde kage?",
+      "bullet_points": "• Undersøg forskellige kombinationer af stykker fra hver kage. • Find kreative måder at vise når stykkerne er lige store. • Kan du opdage et mønster? • Lav din egen guide til at sammenligne kagestykker.",
+      "tips_1": "Prøv at eksperimentere med papircirkler",
+      "tips_2": "Kan du finde flere eksempler hvor man får samme mængde kage?",
+      "tips_3": "Hvilken måde at dele kagen på synes du er mest praktisk?"
+    }
+  ]
+}

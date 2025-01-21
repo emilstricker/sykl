@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "9",
+      "title": "Farveblanding og Mængder",
+      "materials": "Målebægre, vand med frugtfarve, papir, blyant, evt. farvekort",
+      "main_question": "Hvordan kan vi udforske og eksperimentere med mængder gennem farveblanding?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "Du skal lave din egen farveblanding og har tre forskellige opskrifter på mængder: 0,75 liter rød, 3/4 liter blå og 70% af en liter gul. Hvordan kan du undersøge om det er samme mængde? Hvad sker der hvis mængderne er forskellige?",
+      "bullet_points": "• Undersøg forskellige måder at måle og sammenligne mængderne. • Eksperimenter med farveblandinger og forskellige mængder. • Find din egen måde at vise hvordan mængderne hænger sammen. • Hvad sker der med farverne når mængderne ændres?",
+      "tips_1": "Prøv at eksperimentere med vand i forskellige farver",
+      "tips_2": "Kan du finde flere måder at skrive de samme mængder på?",
+      "tips_3": "Hvordan påvirker mængderne den endelige farve?"
+    },
+    {
+      "opgave_number": "9",
+      "title": "Farveblanding og Mængder",
+      "materials": "Målebægre, vand med frugtfarve, papir, blyant, evt. farvekort",
+      "main_question": "Hvordan kan vi udforske og eksperimentere med mængder gennem farveblanding?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du har to malebøtter der skal bruges til at blande farver. Den ene er 0,6 fuld, den anden er 3/5 fuld. Hvordan kan du undersøge om der er samme mængde i begge? Hvilken betydning har det for farveblandingen?",
+      "bullet_points": "• Find forskellige måder at sammenligne mængderne på. • Eksperimenter med hvordan mængderne påvirker farverne. • Prøv at beskrive mængderne på forskellige måder. • Del dine opdagelser om hvordan mængder påvirker farveblanding.",
+      "tips_1": "Prøv at eksperimentere med forskellige måder at måle på",
+      "tips_2": "Kan du finde andre eksempler på tal der betyder det samme?",
+      "tips_3": "Hvordan ville du forklare sammenhængen mellem mængder og farver til en ven?"
+    }
+  ]
+}

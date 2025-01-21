@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "4",
+      "title": "Chokoladeplader og Deling",
+      "materials": "Papir med chokoladeplade-skabeloner, brikker eller klodser, lommeregner",
+      "main_question": "Hvordan kan vi udforske forskellige måder at dele ting lige mellem flere personer?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "Du har en chokoladeplade med 24 stykker og vil dele den mellem forskellige antal personer. Hvordan kan du undersøge de forskellige delingsmuligheder? Hvilke måder kan du bruge til at beskrive hver persons del?",
+      "bullet_points": "• Undersøg hvordan pladen kan deles mellem forskellige antal personer. • Find forskellige måder at vise hver persons del på (brøker, procenter, tegninger). • Kan du finde et mønster i delingerne? • Del dine opdagelser med klassen.",
+      "tips_1": "Prøv at bruge brikker eller klodser til at prøve forskellige delinger",
+      "tips_2": "Kan du finde en sammenhæng mellem antallet af personer og størrelsen af stykkerne?",
+      "tips_3": "Hvordan ville du forklare din opdagelse til en ven?"
+    },
+    {
+      "opgave_number": "4",
+      "title": "Chokoladeplader og Deling",
+      "materials": "Papir med chokoladeplade-skabeloner, brikker eller klodser, lommeregner",
+      "main_question": "Hvordan kan vi udforske forskellige måder at dele ting lige mellem flere personer?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du har to forskellige chokoladeplader: en med 15 stykker og en med 20 stykker. Hvordan kan du undersøge og sammenligne hvad der sker, når du deler dem mellem 3 personer? Er der andre antal personer der giver spændende resultater?",
+      "bullet_points": "• Undersøg hvordan de to plader kan deles. • Find forskellige måder at vise og sammenligne delingerne på. • Prøv at dele mellem forskellige antal personer. • Kan du finde nogle interessante mønstre?",
+      "tips_1": "Prøv at tegne pladerne og vise delingerne",
+      "tips_2": "Kan du bruge både brøker og procenter til at beskrive delene?",
+      "tips_3": "Er der nogle antal personer der gør delingen nemmere end andre?"
+    }
+  ]
+}

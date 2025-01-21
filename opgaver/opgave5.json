@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "opgave_number": "5",
+      "title": "Målebægre og Mærker",
+      "materials": "Forskellige målebægre, vand, tusch, papir og blyant",
+      "main_question": "Hvordan kan vi udforske og forstå forskellige måder at måle og vise mængder på?",
+      "sykl_del_type": "A",
+      "sykl_del_a": "Du har forskellige målebægre med forskellige måder at vise mængder på: nogle bruger brøker (1/2, 1/4), nogle bruger decimaler (0,5, 0,25), og nogle bruger procenter (50%, 25%). Hvordan kan du udforske sammenhængen mellem disse forskellige måder at vise det samme på?",
+      "bullet_points": "• Undersøg hvordan de forskellige mærker hænger sammen. • Find din egen måde at vise sammenhængen mellem brøker, decimaler og procenter. • Kan du opdage et mønster? • Prøv at lave dine egne mærker på et nyt målebæger.",
+      "tips_1": "Prøv at eksperimentere med vand og forskellige målebægre",
+      "tips_2": "Kan du finde flere eksempler på mængder der kan skrives på forskellige måder?",
+      "tips_3": "Hvordan ville du forklare sammenhængen til en ven?"
+    },
+    {
+      "opgave_number": "5",
+      "title": "Målebægre og Mærker",
+      "materials": "Forskellige målebægre, vand, tusch, papir og blyant",
+      "main_question": "Hvordan kan vi udforske og forstå forskellige måder at måle og vise mængder på?",
+      "sykl_del_type": "B",
+      "sykl_del_a": "Du har to målebægre, og du vil udforske forskellige måder at måle samme mængde på. Hvis du fylder et målebæger 0,8 op og et andet 4/5 op, hvordan kan du undersøge om det er samme mængde? Hvilke andre par af tal kunne være interessante at undersøge?",
+      "bullet_points": "• Find forskellige måder at undersøge og sammenligne mængderne på. • Prøv at finde flere par af tal der kunne være ens. • Lav dine egne mærker på målebægrene. • Del dine opdagelser med klassen.",
+      "tips_1": "Prøv at eksperimentere med vand for at se mængderne",
+      "tips_2": "Kan du finde en måde at vise begge mængder på samme måde?",
+      "tips_3": "Hvilken måde at vise mængderne på synes du er nemmest at forstå?"
+    }
+  ]
+}
