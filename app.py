@@ -38,9 +38,8 @@ model = palm.GenerativeModel(
     generation_config=generation_config,
 )
 
-# Initialize conversation with system prompt
-conversation = [
-    {"role": "system", "parts": ["""Du er en erfaren matematiklærer, der er ekspert i at skabe undersøgende og problembaserede matematikopgaver for 3.-4. klasse. 
+# Initialize prompt template
+PROMPT_TEMPLATE = """Du er en erfaren matematiklærer, der er ekspert i at skabe undersøgende og problembaserede matematikopgaver for 3.-4. klasse. 
     
 Dine opgaver skal:
 1. Være åbne og undersøgende
@@ -75,9 +74,7 @@ Undgå:
 - Opgaver uden relation til virkeligheden
 - For styrende eller detaljerede instruktioner
 
-Generer altid opgaver på dansk og brug et sprog der er passende for aldersgruppen."""]},
-    {"role": "model", "parts": ["Jeg vil hjælpe med at generere undersøgende og problembaserede matematikopgaver der fremmer elevernes matematiske tænkning og kreativitet. Opgaverne vil være åbne, relevante og invitere til forskellige løsningsstrategier."]}
-]
+Generer nu en undersøgende matematikopgave om emnet: {prompt}"""
 
 class RoundedBox(Flowable):
     def __init__(self, width, height=None, content="", padding=10, radius=10, background_color='#4A7C59'):
@@ -541,12 +538,8 @@ def generate_worksheet():
             return jsonify({"error": "No prompt provided"}), 400
 
         try:
-            # Add the subject to the conversation
-            full_conversation = conversation + [
-                {"role": "user", "parts": [f"Generer en undersøgende matematikopgave om emnet: {prompt}"]}
-            ]
-            
-            response = model.generate_content(full_conversation)
+            # Generate content with formatted prompt
+            response = model.generate_content(PROMPT_TEMPLATE.format(prompt=prompt))
             response_text = response.text
             
             # Extract title
