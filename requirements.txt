@@ -3,3 +3,5 @@ reportlab==4.1.0
 Flask-WTF==1.2.1
 gunicorn==21.2.0
 google-generativeai==0.3.2
+google-cloud-translate==3.12.0
+google-auth==2.23.4

@@ -12,6 +12,9 @@ import json
 import re
 import zipfile
 import traceback
+import google.oauth2
+from google.oauth2 import service_account
+from google.cloud import translate
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
@@ -350,6 +353,42 @@ def normalize_text(text):
     text = text.replace('\n', '\\n')
     
     return text
+
+def get_credentials():
+    """Get Google Cloud credentials from environment variable."""
+    creds_json = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    if creds_json:
+        try:
+            creds_dict = json.loads(creds_json)
+            credentials = service_account.Credentials.from_service_account_info(creds_dict)
+            return credentials
+        except Exception as e:
+            print(f"Error loading credentials: {e}")
+            return None
+    return None
+
+def translate_text(text, target_language="da"):
+    """Translate text using credentials from environment."""
+    credentials = get_credentials()
+    if not credentials:
+        raise Exception("Credentials not found in environment")
+    
+    client = translate.TranslationServiceClient(credentials=credentials)
+    project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
+    location = "global"
+    parent = f"projects/{project_id}/locations/{location}"
+    
+    response = client.translate_text(
+        request={
+            "parent": parent,
+            "contents": [text],
+            "mime_type": "text/plain",
+            "source_language_code": "en-US",
+            "target_language_code": target_language,
+        }
+    )
+    
+    return response.translations[0].translated_text
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
