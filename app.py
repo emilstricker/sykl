@@ -38,49 +38,45 @@ model = palm.GenerativeModel(
     generation_config=generation_config,
 )
 
-# Initialize chat history with system prompt
-SYSTEM_PROMPT = """Du er en hjælpsom matematiklærer, der genererer opgaveark. 
-Generer to forskellige versioner af opgaven (SYKL-DEL A og SYKL-DEL B).
+# Initialize conversation with system prompt
+conversation = [
+    {"role": "system", "parts": ["""Du er en erfaren matematiklærer, der er ekspert i at skabe undersøgende og problembaserede matematikopgaver for 3.-4. klasse. 
+    
+Dine opgaver skal:
+1. Være åbne og undersøgende
+2. Opmuntre til forskellige løsningsstrategier
+3. Relatere til elevernes hverdag
+4. Fremme matematisk tænkning og ræsonnement
+5. Invitere til samarbejde og diskussion
+6. Have flere mulige løsninger eller løsningsveje
 
-VIGTIGT: Du skal returnere et validt JSON-objekt i præcis dette format uden ekstra tekst eller forklaringer:
-{
-    "worksheets": [
-        {
-            "opgave_number": "1",
-            "title": "Titel på opgaven",
-            "materials": "Liste af materialer",
-            "main_question": "Hovedspørgsmålet",
-            "sykl_del_type": "A",
-            "sykl_del_a": "Beskrivelse af opgaven",
-            "bullet_points": "• Punkt 1\\n• Punkt 2\\n• Punkt 3",
-            "tips_1": "Første tip",
-            "tips_2": "Andet tip",
-            "tips_3": "Tredje tip"
-        },
-        {
-            "opgave_number": "1",
-            "title": "Titel på opgaven",
-            "materials": "Liste af materialer",
-            "main_question": "Hovedspørgsmålet",
-            "sykl_del_type": "B",
-            "sykl_del_a": "Beskrivelse af opgaven",
-            "bullet_points": "• Punkt 1\\n• Punkt 2\\n• Punkt 3",
-            "tips_1": "Første tip",
-            "tips_2": "Andet tip",
-            "tips_3": "Tredje tip"
-        }
-    ]
-}
+Format for hver opgave:
+- Titel: Fængende og relevant
+- Materialer: Konkrete materialer der understøtter undersøgelsen
+- SYKL-DEL A: Den grundlæggende undersøgelse
+- SYKL-DEL B: Udvidelse af undersøgelsen med flere variable eller højere kompleksitet
+- Bullet points: Undersøgelsesspørgsmål (ikke ja/nej spørgsmål)
+- Tips: Vejledende spørgsmål eller hints
 
-HUSK:
-1. Alle felter skal være strenge (strings)
-2. Brug \\n for linjeskift i bullet_points
-3. Start bullet points med •
-4. Returner KUN JSON uden ekstra tekst eller forklaringer"""
+Eksempel på god opgave:
+Titel: "Byg den bedste papirflyver"
+Materialer: "A4-papir, målebånd, stopur"
+SYKL-DEL A: "I skal designe og teste papirflyvere. Undersøg hvordan forskellige designs påvirker hvor langt flyveren kan flyve."
+Bullet points:
+- "Hvordan påvirker vingernes form flyverens flugt?"
+- "Hvilke mønstre ser I i jeres testresultater?"
+- "Hvordan kan I dokumentere jeres undersøgelse?"
+SYKL-DEL B: "Nu skal I optimere jeres design. Undersøg hvordan I kan få flyveren til at flyve både længst og være længst tid i luften."
+Tips: "Prøv at måle både distance og tid. Kan I finde en sammenhæng? Hvordan kan I systematisk teste forskellige designs?"
 
-chat_history = [
-    {"role": "user", "parts": [SYSTEM_PROMPT]},
-    {"role": "model", "parts": ["Jeg vil hjælpe med at generere opgaveark i det ønskede format med både SYKL-DEL A og B versioner. Jeg vil sørge for at opgaverne er på dansk, alderstilpassede og har en naturlig progression i sværhedsgrad mellem de to versioner."]}
+Undgå:
+- Lukkede opgaver med ét rigtigt svar
+- Simple regneopgaver uden kontekst
+- Opgaver uden relation til virkeligheden
+- For styrende eller detaljerede instruktioner
+
+Generer altid opgaver på dansk og brug et sprog der er passende for aldersgruppen."""]},
+    {"role": "model", "parts": ["Jeg vil hjælpe med at generere undersøgende og problembaserede matematikopgaver der fremmer elevernes matematiske tænkning og kreativitet. Opgaverne vil være åbne, relevante og invitere til forskellige løsningsstrategier."]}
 ]
 
 class RoundedBox(Flowable):
@@ -538,80 +534,75 @@ def export_all_worksheets():
 
 @app.route('/generate', methods=['POST'])
 def generate_worksheet():
-    try:
+    """Generate a worksheet based on the prompt."""
+    if request.method == 'POST':
         prompt = request.json.get('prompt')
         if not prompt:
             return jsonify({"error": "No prompt provided"}), 400
 
         try:
-            response = model.generate_content([
-                {"role": "user", "parts": [SYSTEM_PROMPT]},
-                {"role": "user", "parts": [f"Generer et opgaveark baseret på denne beskrivelse: {prompt}"]}
-            ])
+            # Add the subject to the conversation
+            full_conversation = conversation + [
+                {"role": "user", "parts": [f"Generer en undersøgende matematikopgave om emnet: {prompt}"]}
+            ]
             
+            response = model.generate_content(full_conversation)
+            response_text = response.text
+            
+            # Extract title
+            title_match = re.search(r'Titel:\s*"([^"]+)"', response_text)
+            title = title_match.group(1) if title_match else "Matematikopgave"
+            
+            # Extract materials
+            materials_match = re.search(r'Materialer:\s*"([^"]+)"', response_text)
+            materials = materials_match.group(1) if materials_match else ""
+            
+            # Extract SYKL-DEL A
+            sykl_a_match = re.search(r'SYKL-DEL A:\s*"([^"]+)"', response_text)
+            sykl_del_a = sykl_a_match.group(1) if sykl_a_match else ""
+            
+            # Extract bullet points
+            bullet_points_text = ""
+            bullet_points_match = re.search(r'Bullet points:(.*?)(?=SYKL-DEL B|Tips|$)', response_text, re.DOTALL)
+            if bullet_points_match:
+                points = re.findall(r'-\s*"([^"]+)"', bullet_points_match.group(1))
+                bullet_points_text = "• " + "\n• ".join(points) if points else ""
+            
+            # Extract tips
+            tips_match = re.search(r'Tips:\s*"([^"]+)"', response_text)
+            tips = tips_match.group(1) if tips_match else ""
+            tips_list = [tip.strip() for tip in tips.split('?') if tip.strip()]
+            
+            # Create worksheet data
+            worksheet_data = {
+                "title": title,
+                "materials": materials,
+                "sykl_del_type": "A",
+                "sykl_del_a": sykl_del_a,
+                "bullet_points": bullet_points_text,
+                "tips_1": (tips_list[0] + "?") if len(tips_list) > 0 else "",
+                "tips_2": (tips_list[1] + "?") if len(tips_list) > 1 else "",
+                "tips_3": (tips_list[2] + "?") if len(tips_list) > 2 else ""
+            }
+            
+            # Generate PDF
             try:
-                # Get raw text and find JSON bounds
-                response_text = response.text.strip()
-                start_idx = response_text.find('{')
-                end_idx = response_text.rfind('}')
-                
-                if start_idx == -1 or end_idx == -1:
-                    return jsonify({"error": "No valid JSON found in response"}), 500
-                
-                # Extract JSON and normalize newlines
-                json_text = response_text[start_idx:end_idx + 1]
-                json_text = json_text.replace('\n', ' ').replace('\r', '')
-                
-                try:
-                    # Try parsing the normalized JSON
-                    worksheet_data = json.loads(json_text)
-                except json.JSONDecodeError:
-                    # If that fails, try more aggressive cleaning
-                    json_text = re.sub(r'\s+', ' ', json_text)  # Collapse whitespace
-                    json_text = re.sub(r'([{,])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r'\1"\2":', json_text)  # Quote keys
-                    
-                    try:
-                        worksheet_data = json.loads(json_text)
-                    except json.JSONDecodeError as e:
-                        return jsonify({"error": f"Could not parse AI response as JSON: {str(e)}"}), 500
-                
-                # Validate structure
-                if not isinstance(worksheet_data, dict) or 'worksheets' not in worksheet_data:
-                    return jsonify({"error": "Invalid response format"}), 500
-                
-                if not isinstance(worksheet_data['worksheets'], list) or len(worksheet_data['worksheets']) != 2:
-                    return jsonify({"error": "Expected exactly 2 worksheets"}), 500
-                
-                # Clean worksheet data
-                for worksheet in worksheet_data['worksheets']:
-                    for field in ['opgave_number', 'title', 'materials', 'sykl_del_type', 'sykl_del_a', 'bullet_points', 
-                                'tips_1', 'tips_2', 'tips_3']:
-                        # Ensure field exists
-                        if field not in worksheet:
-                            worksheet[field] = ''
-                        
-                        # Normalize text
-                        worksheet[field] = normalize_text(worksheet[field])
-                        
-                        # Special handling for bullet points
-                        if field == 'bullet_points' and worksheet[field]:
-                            # Split on newlines (they're now actual newlines after normalize_text)
-                            points = worksheet[field].split('\n')
-                            # Clean and format each point
-                            points = ['• ' + p.lstrip('•').strip() for p in points if p.strip()]
-                            # Join with escaped newlines
-                            worksheet[field] = '\\n'.join(points)
-                
-                return jsonify(worksheet_data)
-                
+                pdf_buffer = create_pdf(worksheet_data)
+                return send_file(
+                    pdf_buffer,
+                    mimetype='application/pdf',
+                    as_attachment=True,
+                    download_name=f"sykl_opgave_{title.lower().replace(' ', '_')}.pdf"
+                )
             except Exception as e:
-                return jsonify({"error": f"Error processing response: {str(e)}"}), 500
+                print(f"Error generating PDF: {str(e)}")
+                return jsonify({"error": f"Error generating PDF: {str(e)}"}), 500
                 
         except Exception as e:
+            print(f"Error generating content: {str(e)}")
             return jsonify({"error": f"Error generating content: {str(e)}"}), 500
-            
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+
+    return jsonify({"error": "Invalid request method"}), 405
 
 @app.route('/generate', methods=['POST'])
 def generate():

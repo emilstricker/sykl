@@ -38,10 +38,13 @@
                         <!-- AI Generator Section -->
                         <div class="ai-section mb-5">
                             <h4 class="mb-3">Generer med AI</h4>
-                            <div class="form-group mb-3">
-                                <label for="ai_prompt" class="form-label">Beskriv opgaven:</label>
-                                <textarea class="form-control" id="ai_prompt" rows="3" 
-                                    placeholder="F.eks.: Vi skal lære at addere brøker med forskellige nævnere. Måske kan vi bruge pizzaer"></textarea>
+                            <div class="form-group">
+                                <label for="prompt">Matematisk emne:</label>
+                                <input type="text" class="form-control" id="prompt" name="prompt" 
+                                       placeholder="F.eks. 'Brøker', 'Geometri', 'Målinger', 'Statistik'" required>
+                                <small class="form-text text-muted">
+                                    Indtast et matematisk emne, og jeg vil generere en undersøgende opgave, der fremmer problemløsning og kreativ tænkning.
+                                </small>
                             </div>
                             <button type="button" class="btn btn-primary mb-3" id="generateBtn" onclick="generateWorksheet()">
                                 Generer Opgaveark
@@ -254,9 +257,9 @@
         }
 
         async function generateWorksheet() {
-            const prompt = document.getElementById('ai_prompt').value;
+            const prompt = document.getElementById('prompt').value;
             if (!prompt) {
-                alert('Indtast venligst en beskrivelse af opgaven');
+                alert('Indtast venligst et matematisk emne');
                 return;
             }
 
