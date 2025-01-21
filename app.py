@@ -115,6 +115,15 @@ class RoundedBox(Flowable):
             text_object.textLine(line.strip())
         self.canv.drawText(text_object)
 
+def get_font_name():
+    """Get the font name to use, with fallback to Helvetica"""
+    try:
+        # Try to use the font to see if it's registered
+        pdfmetrics.getFont('ArialRoundedMTBold')
+        return 'ArialRoundedMTBold'
+    except:
+        return 'Helvetica-Bold'
+
 def split_bullet_points(bullet_points):
     """Split bullet points that are separated by either newlines or dots"""
     if not bullet_points:
@@ -154,7 +163,14 @@ def create_pdf(worksheet_data):
     sykl_green = '#4A7C59'  # Dark green for headers
     
     # Register Arial Rounded MT Bold font if available
-    pdfmetrics.registerFont(TTFont('ArialRoundedMTBold', 'static/fonts/ARLRDBD.TTF'))
+    font_path = os.path.join('static', 'fonts', 'arialroundedmtbold.ttf')
+    try:
+        pdfmetrics.registerFont(TTFont('ArialRoundedMTBold', font_path))
+    except:
+        print("Warning: Could not load Arial Rounded MT Bold font, falling back to Helvetica")
+    
+    # Get the font name to use
+    display_font = get_font_name()
     
     # Define styles
     styles = getSampleStyleSheet()
@@ -167,7 +183,7 @@ def create_pdf(worksheet_data):
         textColor='black',
         spaceAfter=10,
         alignment=1,  # Center alignment
-        fontName='ArialRoundedMTBold'
+        fontName=display_font
     )
     
     # Title style
@@ -177,7 +193,7 @@ def create_pdf(worksheet_data):
         fontSize=28,
         textColor=sykl_green,
         spaceAfter=15,
-        fontName='ArialRoundedMTBold'
+        fontName=display_font
     )
     
     # Subtitle style
@@ -188,7 +204,7 @@ def create_pdf(worksheet_data):
         textColor=sykl_green,
         spaceBefore=10,
         spaceAfter=5,
-        fontName='ArialRoundedMTBold'
+        fontName=display_font
     )
     
     # Normal text style
@@ -209,7 +225,7 @@ def create_pdf(worksheet_data):
         textColor='white',
         spaceAfter=3,
         leading=16,
-        fontName='ArialRoundedMTBold'
+        fontName=display_font
     )
     
     story = []
@@ -271,7 +287,7 @@ def create_pdf(worksheet_data):
                 ('BACKGROUND', (0, 0), (-1, -1), sykl_green),
                 ('TEXTCOLOR', (0, 0), (-1, -1), 'white'),
                 ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                ('FONTNAME', (0, 0), (-1, -1), 'ArialRoundedMTBold'),
+                ('FONTNAME', (0, 0), (-1, -1), display_font),
                 ('FONTSIZE', (0, 0), (-1, -1), 14),
                 ('TOPPADDING', (0, 0), (-1, -1), 10),
                 ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
