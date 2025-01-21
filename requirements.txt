@@ -4,3 +4,4 @@ Flask-WTF==1.2.1
 gunicorn==21.2.0
 google-generativeai==0.3.2
 google-cloud-translate==2.0.1
+reportlab==4.1.0
