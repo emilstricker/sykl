@@ -264,68 +264,39 @@
             }
 
             try {
-                document.getElementById('generateBtn').disabled = true;
-                document.getElementById('generateBtn').textContent = 'Genererer...';
-
                 const response = await fetch('/generate', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ prompt: prompt })
                 });
 
                 if (!response.ok) {
-                    const error = await response.text();
-                    throw new Error(error);
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Der opstod en fejl ved generering af opgavearket');
                 }
 
-                const data = await response.json();
-                console.log('Generated worksheet data:', data);  // Debug log
-
-                if (data.worksheets && data.worksheets.length === 2) {
-                    // Fill both forms
-                    ['A', 'B'].forEach((type, index) => {
-                        const worksheet = data.worksheets[index];
-                        const suffix = type.toLowerCase();
-                        
-                        // Log the form data being set
-                        console.log(`Setting data for worksheet ${type}:`, worksheet);
-
-                        // Get each form field by its actual ID
-                        const opgaveNumber = document.getElementById(`opgave_number_${suffix}`);
-                        const title = document.getElementById(`title_${suffix}`);
-                        const materials = document.getElementById(`materials_${suffix}`);
-                        const mainQuestion = document.getElementById(`main_question_${suffix}`);
-                        const syklDelType = document.getElementById(`sykl_del_type_${suffix}`);
-                        const syklDelA = document.getElementById(`sykl_del_a_${suffix}`);
-                        const bulletPoints = document.getElementById(`bullet_points_${suffix}`);
-                        const tips1 = document.getElementById(`tips_1_${suffix}`);
-                        const tips2 = document.getElementById(`tips_2_${suffix}`);
-                        const tips3 = document.getElementById(`tips_3_${suffix}`);
-
-                        // Set values with null checks
-                        if (opgaveNumber) opgaveNumber.value = worksheet.opgave_number || '';
-                        if (title) title.value = worksheet.title || '';
-                        if (materials) materials.value = worksheet.materials || '';
-                        if (mainQuestion) mainQuestion.value = worksheet.main_question || '';
-                        if (syklDelType) syklDelType.value = worksheet.sykl_del_type || type;
-                        if (syklDelA) syklDelA.value = worksheet.sykl_del_a || '';
-                        if (bulletPoints) bulletPoints.value = worksheet.bullet_points || '';
-                        if (tips1) tips1.value = worksheet.tips_1 || '';
-                        if (tips2) tips2.value = worksheet.tips_2 || '';
-                        if (tips3) tips3.value = worksheet.tips_3 || '';
-                    });
-                } else {
-                    throw new Error('Ugyldigt svar fra AI');
-                }
+                // Get the blob from the response
+                const blob = await response.blob();
+                
+                // Create a URL for the blob
+                const url = window.URL.createObjectURL(blob);
+                
+                // Create a temporary link and click it to download the file
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sykl_opgave.pdf';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Clean up
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
 
             } catch (error) {
                 console.error('Error:', error);
-                alert('Der opstod en fejl: ' + error.message);
-            } finally {
-                document.getElementById('generateBtn').disabled = false;
-                document.getElementById('generateBtn').textContent = 'Generer';
+                alert('Fejl: ' + error.message);
             }
         }
 

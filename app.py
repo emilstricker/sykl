@@ -530,7 +530,7 @@ def export_all_worksheets():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/generate', methods=['POST'])
-def generate_worksheet():
+def generate():
     """Generate a worksheet based on the prompt."""
     if request.method == 'POST':
         prompt = request.json.get('prompt')
@@ -597,8 +597,8 @@ def generate_worksheet():
 
     return jsonify({"error": "Invalid request method"}), 405
 
-@app.route('/generate', methods=['POST'])
-def generate():
+@app.route('/generate_text', methods=['POST'])
+def generate_text():
     try:
         data = request.get_json()
         prompt = data.get('prompt', '')
