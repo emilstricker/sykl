@@ -38,43 +38,66 @@ model = palm.GenerativeModel(
     generation_config=generation_config,
 )
 
-# Initialize prompt template
-PROMPT_TEMPLATE = """Du er en erfaren matematiklærer, der er ekspert i at skabe undersøgende og problembaserede matematikopgaver for 3.-4. klasse. 
+# Conversation history to guide the model
+conversation_history = [
+    {"role": "user", "parts": ["""You are a Danish elementary school math teacher who creates engaging, open-ended math problems that promote problem-solving skills and mathematical thinking. Your worksheets should:
+
+1. Focus on real-world scenarios that students can relate to
+2. Encourage multiple solution strategies
+3. Ask students to explain their thinking
+4. Include opportunities for creative problem-solving
+5. Promote mathematical discussions
+6. Allow for different skill levels
+7. Integrate visual thinking and drawing
+
+Please generate a worksheet in this format:
+{
+    "title": "Title of the worksheet",
+    "materials": "List of required materials",
+    "sykl_del_type": "A or B",
+    "sykl_del_a": "Main task description",
+    "bullet_points": "Additional questions or tasks",
+    "tips": "Helpful tips for solving the problem"
+}
+
+Make sure the content is age-appropriate for grades 3-4 (9-10 years old)."""]},
     
-Dine opgaver skal:
-1. Være åbne og undersøgende
-2. Opmuntre til forskellige løsningsstrategier
-3. Relatere til elevernes hverdag
-4. Fremme matematisk tænkning og ræsonnement
-5. Invitere til samarbejde og diskussion
-6. Have flere mulige løsninger eller løsningsveje
+    {"role": "model", "parts": ["I'll help create engaging, open-ended math worksheets that promote problem-solving and mathematical thinking. I'll ensure they:
 
-Format for hver opgave:
-- Titel: Fængende og relevant
-- Materialer: Konkrete materialer der understøtter undersøgelsen
-- SYKL-DEL A: Den grundlæggende undersøgelse
-- SYKL-DEL B: Udvidelse af undersøgelsen med flere variable eller højere kompleksitet
-- Bullet points: Undersøgelsesspørgsmål (ikke ja/nej spørgsmål)
-- Tips: Vejledende spørgsmål eller hints
+1. Use authentic contexts that 9-10 year olds can relate to
+2. Encourage exploration and multiple solution paths
+3. Ask 'how' and 'why' questions to promote mathematical reasoning
+4. Include creative elements like drawing and designing
+5. Foster group discussions and sharing of strategies
+6. Allow for differentiation through low floor, high ceiling tasks
+7. Integrate visual representations and spatial thinking
 
-Eksempel på god opgave:
-Titel: "Byg den bedste papirflyver"
-Materialer: "A4-papir, målebånd, stopur"
-SYKL-DEL A: "I skal designe og teste papirflyvere. Undersøg hvordan forskellige designs påvirker hvor langt flyveren kan flyve."
-Bullet points:
-- "Hvordan påvirker vingernes form flyverens flugt?"
-- "Hvilke mønstre ser I i jeres testresultater?"
-- "Hvordan kan I dokumentere jeres undersøgelse?"
-SYKL-DEL B: "Nu skal I optimere jeres design. Undersøg hvordan I kan få flyveren til at flyve både længst og være længst tid i luften."
-Tips: "Prøv at måle både distance og tid. Kan I finde en sammenhæng? Hvordan kan I systematisk teste forskellige designs?"
+I'll format the worksheets as requested, with clear materials, tasks, and helpful tips."]},
 
-Undgå:
-- Lukkede opgaver med ét rigtigt svar
-- Simple regneopgaver uden kontekst
-- Opgaver uden relation til virkeligheden
-- For styrende eller detaljerede instruktioner
+    {"role": "user", "parts": ["Great! Please generate a worksheet that follows these principles. Remember to make it engaging and open-ended, while still being appropriate for 3rd-4th grade."]},
+    
+    {"role": "model", "parts": ["""Here's an example of how I'll structure open-ended math problems:
 
-Generer nu en undersøgende matematikopgave om emnet: {prompt}"""
+{
+    "title": "Design en Pizza Restaurant",
+    "materials": "Papir, blyant, lineal, farver",
+    "sykl_del_type": "A",
+    "sykl_del_a": "Du skal hjælpe med at designe menuen til en ny pizza restaurant! Restauranten vil gerne have forskellige størrelser af pizzaer: lille (20 cm), mellem (30 cm) og stor (40 cm). Undersøg og sammenlign de forskellige pizzastørrelser.",
+    "bullet_points": "• Tegn de forskellige pizzastørrelser på dit papir. Hvordan kan du sammenligne dem?\n• Hvor meget større er en stor pizza end en lille pizza? Find på forskellige måder at vise det.\n• Hvis en mellem pizza koster 80 kr., hvad synes du så en lille og en stor pizza skal koste? Forklar din tankegang.\n• Hvordan kan du vise, at din prissætning er retfærdig?\n• Bonus: Design din egen specialpizza og beregn en fair pris for den.",
+    "tips": "Tænk på arealet af cirklerne • Brug tegninger til at vise dine sammenligninger • Der er mange rigtige måder at løse opgaven på • Del dine ideer med en klassekammerat"
+}
+
+This problem:
+1. Uses a familiar context (pizzas)
+2. Involves multiple math concepts (geometry, measurement, proportional reasoning)
+3. Allows for different solution strategies
+4. Encourages visual thinking and creativity
+5. Promotes discussion and justification
+6. Can be approached at different levels
+7. Has real-world applications"""]},
+
+    {"role": "user", "parts": ["Perfect! Now generate another worksheet following the same principles."]}
+]
 
 class RoundedBox(Flowable):
     def __init__(self, width, height=None, content="", padding=10, radius=10, background_color='#4A7C59'):
@@ -531,116 +554,51 @@ def export_all_worksheets():
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    """Generate a worksheet based on the prompt."""
+    """Generate a worksheet based on the provided prompt."""
     if request.method == 'POST':
-        prompt = request.json.get('prompt')
+        prompt = request.form.get('prompt')
         if not prompt:
             return jsonify({"error": "No prompt provided"}), 400
 
         try:
-            # Generate content with formatted prompt
-            response = model.generate_content(PROMPT_TEMPLATE.format(prompt=prompt))
-            response_text = response.text
+            response = model.generate_content(conversation_history + [
+                {"role": "user", "parts": [f"Generer et opgaveark baseret på denne beskrivelse: {prompt}"]}
+            ])
             
-            # Extract title
-            title_match = re.search(r'Titel:\s*"([^"]+)"', response_text)
-            title = title_match.group(1) if title_match else "Matematikopgave"
-            
-            # Extract materials
-            materials_match = re.search(r'Materialer:\s*"([^"]+)"', response_text)
-            materials = materials_match.group(1) if materials_match else ""
-            
-            # Create both worksheets
-            worksheets = []
-            
-            # Extract SYKL-DEL A
-            sykl_a_match = re.search(r'SYKL-DEL A:\s*"([^"]+)"', response_text)
-            sykl_del_a = sykl_a_match.group(1) if sykl_a_match else ""
-            
-            # Extract bullet points for A
-            bullet_points_a = ""
-            bullet_points_match = re.search(r'Bullet points:(.*?)(?=SYKL-DEL B|Tips|$)', response_text, re.DOTALL)
-            if bullet_points_match:
-                points = re.findall(r'-\s*"([^"]+)"', bullet_points_match.group(1))
-                bullet_points_a = "• " + "\n• ".join(points) if points else ""
-            
-            # Extract SYKL-DEL B
-            sykl_b_match = re.search(r'SYKL-DEL B:\s*"([^"]+)"', response_text)
-            sykl_del_b = sykl_b_match.group(1) if sykl_b_match else ""
-            
-            # Extract bullet points for B (if any after SYKL-DEL B)
-            bullet_points_b = ""
-            bullet_points_b_match = re.search(r'SYKL-DEL B:.*?Bullet points:(.*?)(?=Tips|$)', response_text, re.DOTALL)
-            if bullet_points_b_match:
-                points = re.findall(r'-\s*"([^"]+)"', bullet_points_b_match.group(1))
-                bullet_points_b = "• " + "\n• ".join(points) if points else ""
-            else:
-                # If no specific bullet points for B, use A's points
-                bullet_points_b = bullet_points_a
-            
-            # Extract tips
-            tips_match = re.search(r'Tips:\s*"([^"]+)"', response_text)
-            tips = tips_match.group(1) if tips_match else ""
-            tips_list = [tip.strip() for tip in tips.split('?') if tip.strip()]
-            
-            # Create worksheet A
-            worksheets.append({
-                "title": title,
-                "materials": materials,
-                "sykl_del_type": "A",
-                "sykl_del_a": sykl_del_a,
-                "bullet_points": bullet_points_a,
-                "tips_1": (tips_list[0] + "?") if len(tips_list) > 0 else "",
-                "tips_2": (tips_list[1] + "?") if len(tips_list) > 1 else "",
-                "tips_3": (tips_list[2] + "?") if len(tips_list) > 2 else ""
-            })
-            
-            # Create worksheet B
-            worksheets.append({
-                "title": title,
-                "materials": materials,
-                "sykl_del_type": "B",
-                "sykl_del_a": sykl_del_b,  # Use SYKL-DEL B content here
-                "bullet_points": bullet_points_b,
-                "tips_1": (tips_list[0] + "?") if len(tips_list) > 0 else "",
-                "tips_2": (tips_list[1] + "?") if len(tips_list) > 1 else "",
-                "tips_3": (tips_list[2] + "?") if len(tips_list) > 2 else ""
-            })
-            
-            # Generate PDFs for both worksheets
-            pdf_buffers = []
-            for worksheet in worksheets:
-                try:
-                    pdf_buffer = create_pdf(worksheet)
-                    pdf_buffers.append(pdf_buffer)
-                except Exception as e:
-                    print(f"Error generating PDF: {str(e)}")
-                    return jsonify({"error": f"Error generating PDF: {str(e)}"}), 500
-            
-            # Combine PDFs
-            output = BytesIO()
-            from PyPDF2 import PdfMerger
-            merger = PdfMerger()
-            for buffer in pdf_buffers:
-                merger.append(buffer)
-            merger.write(output)
-            output.seek(0)
-            
-            return send_file(
-                output,
-                mimetype='application/pdf',
-                as_attachment=True,
-                download_name=f"sykl_opgave_{title.lower().replace(' ', '_')}.pdf"
-            )
+            # Parse the response
+            try:
+                worksheet_data = json.loads(response.text)
+                
+                # Generate PDF
+                pdf_buffer = create_pdf(worksheet_data)
+                
+                # Save worksheet data
+                worksheet_number = len(os.listdir('opgaver')) + 1
+                worksheet_filename = f'opgave{worksheet_number}.json'
+                
+                with open(os.path.join('opgaver', worksheet_filename), 'w', encoding='utf-8') as f:
+                    json.dump(worksheet_data, f, ensure_ascii=False, indent=4)
+                
+                # Return PDF file
+                return send_file(
+                    pdf_buffer,
+                    mimetype='application/pdf',
+                    as_attachment=True,
+                    download_name=f'worksheet_{worksheet_number}.pdf'
+                )
+                
+            except json.JSONDecodeError as e:
+                print(f"JSON parsing error: {str(e)}")
+                print(f"Response text: {response.text}")
+                return jsonify({"error": f"Error parsing response: {str(e)}"}), 500
                 
         except Exception as e:
-            print(f"Error generating content: {str(e)}")
+            print(f"Generation error: {str(e)}")
+            traceback.print_exc()
             return jsonify({"error": f"Error generating content: {str(e)}"}), 500
 
-    return jsonify({"error": "Invalid request method"}), 405
-
-@app.route('/generate_text', methods=['POST'])
-def generate_text():
+@app.route('/generate', methods=['POST'])
+def generate_worksheet():
     try:
         data = request.get_json()
         prompt = data.get('prompt', '')
