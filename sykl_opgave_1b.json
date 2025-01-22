@@ -1,0 +1,12 @@
+{
+  "opgave_number": "1",
+  "sykl_del_type": "B",
+  "title": "Mønster med mønter",
+  "materials": "",
+  "main_question": "En gruppe børn vil lave et mønster på bordet med mønter. Først lægger de 1 mønt i første række, derefter 3 mønter i anden række, og så 5 mønter i tredje række. De fortsætter mønsteret på samme måde.",
+  "sykl_del_a": "Hvor mange mønter skal I bruge til:",
+  "bullet_points": "Den tiende række?\nHvor mange mønter er der i alt efter 10 rækker?",
+  "tips_1": "Prøv at finde en regel, der kan forklare, hvor mange mønter der er i en række ud fra rækkens nummer.",
+  "tips_2": "Kan I bruge jeres regel til at finde antallet af mønter i den tiende række?",
+  "tips_3": "Regn sammen, hvor mange mønter der er i alt efter de første 10 rækker. Kan I bruge reglen til at gøre det nemmere?"
+}

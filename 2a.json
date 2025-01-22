@@ -1,0 +1,12 @@
+{
+  "opgave_number": "2",
+  "sykl_del_type": "A",
+  "title": "Hvor mange pizzaer?",
+  "materials": "",
+  "main_question": "En skole skal holde en fest, og der skal bestilles pizzaer. Der er 24 elever i klassen, og hver elev kan spise enten 1/4, 1/3 eller 1/2 pizza.",
+  "sykl_del_a": "Hvor mange pizzaer skal I bestille, hvis:",
+  "bullet_points": "Alle spiser 1/4 pizza?\nAlle spiser 1/3 pizza?",
+  "tips_1": "Regn ud, hvor mange 'fjerdele' der er i én hel pizza.",
+  "tips_2": "Hvor mange pizzaer skal I bruge, hvis der skal være nok til 24 elever?",
+  "tips_3": "Prøv at tegne pizzaer med de stykker, hver elev spiser."
+}

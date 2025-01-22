@@ -50,8 +50,8 @@ For SYKL-DEL B, use:
    - Use everyday situations or objects
 
 2. **sykl_del_a**/**sykl_del_b** should:
-   - For A: Ask basic exploration questions
-   - For B: Ask for pattern generalizations or deeper understanding
+   - For A: Ask open-ended questions that encourage exploration, multiple solution paths, and different approaches to problem-solving. Focus on "how" and "why" questions rather than just "what". Encourage students to explain their reasoning.
+   - For B: Ask open-ended questions that encourage deeper understanding, critical thinking, and creative solutions. These questions should challenge students to generalize, make connections, and apply their knowledge in novel ways. Encourage students to justify their solutions and explore alternative approaches.
 
 3. **bullet_points** should:
    - Be specific, measurable tasks
@@ -125,3 +125,4 @@ Before finalizing your JSON:
 - [ ] Does DEL B build meaningfully on DEL A?
 - [ ] Is all text properly formatted for JSON?
 - [ ] Are newlines properly indicated with \n?
+- [ ] Are the questions open-ended and encourage creative problem-solving?

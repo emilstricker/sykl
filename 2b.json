@@ -1,0 +1,12 @@
+{
+  "opgave_number": "2",
+  "sykl_del_type": "B",
+  "title": "Hvor mange pizzaer?",
+  "materials": "",
+  "main_question": "En skole skal holde en fest, og der skal bestilles pizzaer. Der er 24 elever i klassen, og hver elev kan spise enten 1/4, 1/3 eller 1/2 pizza.",
+  "sykl_del_a": "Hvor mange pizzaer skal I bestille, hvis:",
+  "bullet_points": "Halvdelen af klassen spiser 1/4 pizza, og den anden halvdel spiser 1/3 pizza?\nKan I finde en kombination, der giver præcist nok pizzaer til klassen, uden rester?",
+  "tips_1": "Start med at regne antallet af stykker for 1/4 og 1/3 separat.",
+  "tips_2": "Kan I finde en fælles nævner for brøkerne?",
+  "tips_3": "Prøv at tænke på, hvordan I kan fordele pizzaerne, så der ikke er for meget til overs."
+}

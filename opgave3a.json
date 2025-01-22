@@ -1,0 +1,12 @@
+{
+  "opgave_number": "1",
+  "sykl_del_type": "A",
+  "title": "Tændstik Figurer",
+  "materials": "Tændstikker eller pinde",
+  "main_question": "I skal bygge trekanter med tændstikker. Den første trekant bruger 3 tændstikker. Når I bygger den næste trekant ved siden af, deler de en side, så I kun skal bruge 2 nye tændstikker.",
+  "sykl_del_a": "Hvor mange tændstikker skal I bruge til:",
+  "bullet_points": "At bygge 3 trekanter på række?\nAt bygge 4 trekanter på række?",
+  "tips_1": "Start med at bygge de første to trekanter og tæl tændstikkerne.",
+  "tips_2": "Se på hvor mange nye tændstikker I bruger for hver ny trekant.",
+  "tips_3": "Lav en tabel der viser antallet af tændstikker for hver ny trekant."
+}

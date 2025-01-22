@@ -38,65 +38,13 @@ model = palm.GenerativeModel(
     generation_config=generation_config,
 )
 
-# Conversation history to guide the model
-conversation_history = [
-    {"role": "user", "parts": ["""You are a Danish elementary school math teacher who creates engaging, open-ended math problems that promote problem-solving skills and mathematical thinking. Your worksheets should:
+# Initialize chat history with system prompt
+with open('sykl-question-prompt.md', 'r') as f:
+    SYSTEM_PROMPT = f.read()
 
-1. Focus on real-world scenarios that students can relate to
-2. Encourage multiple solution strategies
-3. Ask students to explain their thinking
-4. Include opportunities for creative problem-solving
-5. Promote mathematical discussions
-6. Allow for different skill levels
-7. Integrate visual thinking and drawing
-
-Please generate a worksheet in this format:
-{
-    "title": "Title of the worksheet",
-    "materials": "List of required materials",
-    "sykl_del_type": "A or B",
-    "sykl_del_a": "Main task description",
-    "bullet_points": "Additional questions or tasks",
-    "tips": "Helpful tips for solving the problem"
-}
-
-Make sure the content is age-appropriate for grades 3-4 (9-10 years old)."""]},
-    
-    {"role": "model", "parts": ["I'll help create engaging, open-ended math worksheets that promote problem-solving and mathematical thinking. I'll ensure they:
-
-1. Use authentic contexts that 9-10 year olds can relate to
-2. Encourage exploration and multiple solution paths
-3. Ask 'how' and 'why' questions to promote mathematical reasoning
-4. Include creative elements like drawing and designing
-5. Foster group discussions and sharing of strategies
-6. Allow for differentiation through low floor, high ceiling tasks
-7. Integrate visual representations and spatial thinking
-
-I'll format the worksheets as requested, with clear materials, tasks, and helpful tips."]},
-
-    {"role": "user", "parts": ["Great! Please generate a worksheet that follows these principles. Remember to make it engaging and open-ended, while still being appropriate for 3rd-4th grade."]},
-    
-    {"role": "model", "parts": ["""Here's an example of how I'll structure open-ended math problems:
-
-{
-    "title": "Design en Pizza Restaurant",
-    "materials": "Papir, blyant, lineal, farver",
-    "sykl_del_type": "A",
-    "sykl_del_a": "Du skal hjælpe med at designe menuen til en ny pizza restaurant! Restauranten vil gerne have forskellige størrelser af pizzaer: lille (20 cm), mellem (30 cm) og stor (40 cm). Undersøg og sammenlign de forskellige pizzastørrelser.",
-    "bullet_points": "• Tegn de forskellige pizzastørrelser på dit papir. Hvordan kan du sammenligne dem?\n• Hvor meget større er en stor pizza end en lille pizza? Find på forskellige måder at vise det.\n• Hvis en mellem pizza koster 80 kr., hvad synes du så en lille og en stor pizza skal koste? Forklar din tankegang.\n• Hvordan kan du vise, at din prissætning er retfærdig?\n• Bonus: Design din egen specialpizza og beregn en fair pris for den.",
-    "tips": "Tænk på arealet af cirklerne • Brug tegninger til at vise dine sammenligninger • Der er mange rigtige måder at løse opgaven på • Del dine ideer med en klassekammerat"
-}
-
-This problem:
-1. Uses a familiar context (pizzas)
-2. Involves multiple math concepts (geometry, measurement, proportional reasoning)
-3. Allows for different solution strategies
-4. Encourages visual thinking and creativity
-5. Promotes discussion and justification
-6. Can be approached at different levels
-7. Has real-world applications"""]},
-
-    {"role": "user", "parts": ["Perfect! Now generate another worksheet following the same principles."]}
+chat_history = [
+    {"role": "user", "parts": [SYSTEM_PROMPT]},
+    {"role": "model", "parts": ["Jeg vil hjælpe med at generere opgaveark i det ønskede format med både SYKL-DEL A og B versioner. Jeg vil sørge for at opgaverne er på dansk, alderstilpassede og har en naturlig progression i sværhedsgrad mellem de to versioner."]}
 ]
 
 class RoundedBox(Flowable):
@@ -553,52 +501,84 @@ def export_all_worksheets():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/generate', methods=['POST'])
-def generate():
-    """Generate a worksheet based on the provided prompt."""
-    if request.method == 'POST':
-        prompt = request.form.get('prompt')
+def generate_worksheet():
+    try:
+        prompt = request.json.get('prompt')
         if not prompt:
             return jsonify({"error": "No prompt provided"}), 400
 
         try:
-            response = model.generate_content(conversation_history + [
+            response = model.generate_content([
+                {"role": "user", "parts": [SYSTEM_PROMPT]},
                 {"role": "user", "parts": [f"Generer et opgaveark baseret på denne beskrivelse: {prompt}"]}
             ])
             
-            # Parse the response
             try:
-                worksheet_data = json.loads(response.text)
+                # Get raw text and find JSON bounds
+                response_text = response.text.strip()
+                start_idx = response_text.find('{')
+                end_idx = response_text.rfind('}')
                 
-                # Generate PDF
-                pdf_buffer = create_pdf(worksheet_data)
+                if start_idx == -1 or end_idx == -1:
+                    return jsonify({"error": "No valid JSON found in response"}), 500
                 
-                # Save worksheet data
-                worksheet_number = len(os.listdir('opgaver')) + 1
-                worksheet_filename = f'opgave{worksheet_number}.json'
+                # Extract JSON and normalize newlines
+                json_text = response_text[start_idx:end_idx + 1]
+                json_text = json_text.replace('\n', ' ').replace('\r', '')
                 
-                with open(os.path.join('opgaver', worksheet_filename), 'w', encoding='utf-8') as f:
-                    json.dump(worksheet_data, f, ensure_ascii=False, indent=4)
+                try:
+                    # Try parsing the normalized JSON
+                    worksheet_data = json.loads(json_text)
+                except json.JSONDecodeError:
+                    # If that fails, try more aggressive cleaning
+                    json_text = re.sub(r'\s+', ' ', json_text)  # Collapse whitespace
+                    json_text = re.sub(r'([{,])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r'\1"\2":', json_text)  # Quote keys
+                    
+                    try:
+                        worksheet_data = json.loads(json_text)
+                    except json.JSONDecodeError as e:
+                        return jsonify({"error": f"Could not parse AI response as JSON: {str(e)}"}), 500
                 
-                # Return PDF file
-                return send_file(
-                    pdf_buffer,
-                    mimetype='application/pdf',
-                    as_attachment=True,
-                    download_name=f'worksheet_{worksheet_number}.pdf'
-                )
+                # Validate structure
+                if not isinstance(worksheet_data, dict) or 'worksheets' not in worksheet_data:
+                    return jsonify({"error": "Invalid response format"}), 500
                 
-            except json.JSONDecodeError as e:
-                print(f"JSON parsing error: {str(e)}")
-                print(f"Response text: {response.text}")
-                return jsonify({"error": f"Error parsing response: {str(e)}"}), 500
+                if not isinstance(worksheet_data['worksheets'], list) or len(worksheet_data['worksheets']) != 2:
+                    return jsonify({"error": "Expected exactly 2 worksheets"}), 500
+                
+                # Clean worksheet data
+                for worksheet in worksheet_data['worksheets']:
+                    for field in ['opgave_number', 'title', 'materials', 'sykl_del_type', 'sykl_del_a', 'bullet_points', 
+                                'tips_1', 'tips_2', 'tips_3']:
+                        # Ensure field exists
+                        if field not in worksheet:
+                            worksheet[field] = ''
+                        
+                        # Normalize text
+                        worksheet[field] = normalize_text(worksheet[field])
+                        
+                        # Special handling for bullet points
+                        if field == 'bullet_points' and worksheet[field]:
+                            # Split on newlines (they're now actual newlines after normalize_text)
+                            points = worksheet[field].split('\n')
+                            # Clean and format each point
+                            points = ['• ' + p.lstrip('•').strip() for p in points if p.strip()]
+                            # Join with escaped newlines
+                            worksheet[field] = '\\n'.join(points)
+                
+                return jsonify(worksheet_data)
+                
+            except Exception as e:
+                return jsonify({"error": f"Error processing response: {str(e)}"}), 500
                 
         except Exception as e:
-            print(f"Generation error: {str(e)}")
-            traceback.print_exc()
             return jsonify({"error": f"Error generating content: {str(e)}"}), 500
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/generate', methods=['POST'])
-def generate_worksheet():
+def generate():
     try:
         data = request.get_json()
         prompt = data.get('prompt', '')

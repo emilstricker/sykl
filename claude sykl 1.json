@@ -1,0 +1,25 @@
+{
+"opgave_number": "1",
+"sykl_del_type": "A",
+"title": "Pizza Party Planlægning",
+"materials": "",
+"main_question": "Hjælp med at planlægge en pizzafest ved at sammenligne forskellige mængder af pizzaer og stykker.",
+"sykl_del_a": "Hvilken mulighed ville mætte flest personer:",
+"bullet_points": "25% af 8 pizzaer eller 50% af 4 pizzaer?\nHvis hver pizza har 8 stykker, hvor mange stykker er 75% af 2 pizzaer?\nHvis du spiser 0,5 af en pizza, hvilken procentdel af hele pizzaen har du så spist?",
+"tips_1": "Start med at finde ud af, hvad hver procent betyder ud af det samlede antal pizzaer.",
+"tips_2": "Tegn figurer for at hjælpe med at visualisere de forskellige mængder.",
+"tips_3": "Husk at 50% er det samme som en halv, og 25% er det samme som en kvart."
+}
+SYKL-DEL B: "Pizza Party Planlægning"
+{
+"opgave_number": "1",
+"sykl_del_type": "B",
+"title": "Pizza Party Planlægning",
+"materials": "",
+"main_question": "Udforsk forskellige måder at udtrykke dele af pizzaer ved hjælp af decimaler, brøker og procenter.",
+"sykl_del_b": "Tænk over disse pizza-situationer:",
+"bullet_points": "Hvis du har 0,75 af en pizza tilbage, hvilken procent er det så?\nHvor mange stykker er 37,5% af en 16-stykkers pizza?\nHvis du spiste 3/8 af en pizza, hvilket decimal og procent ville det være?",
+"tips_1": "Prøv at konvertere mellem forskellige former (decimal til procent, brøk til decimal).",
+"tips_2": "Brug multiplikation til at finde dele af hele tal.",
+"tips_3": "Husk at 100% svarer til en hel pizza."
+}
