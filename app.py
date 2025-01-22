@@ -550,46 +550,88 @@ def generate():
             materials_match = re.search(r'Materialer:\s*"([^"]+)"', response_text)
             materials = materials_match.group(1) if materials_match else ""
             
+            # Create both worksheets
+            worksheets = []
+            
             # Extract SYKL-DEL A
             sykl_a_match = re.search(r'SYKL-DEL A:\s*"([^"]+)"', response_text)
             sykl_del_a = sykl_a_match.group(1) if sykl_a_match else ""
             
-            # Extract bullet points
-            bullet_points_text = ""
+            # Extract bullet points for A
+            bullet_points_a = ""
             bullet_points_match = re.search(r'Bullet points:(.*?)(?=SYKL-DEL B|Tips|$)', response_text, re.DOTALL)
             if bullet_points_match:
                 points = re.findall(r'-\s*"([^"]+)"', bullet_points_match.group(1))
-                bullet_points_text = "• " + "\n• ".join(points) if points else ""
+                bullet_points_a = "• " + "\n• ".join(points) if points else ""
+            
+            # Extract SYKL-DEL B
+            sykl_b_match = re.search(r'SYKL-DEL B:\s*"([^"]+)"', response_text)
+            sykl_del_b = sykl_b_match.group(1) if sykl_b_match else ""
+            
+            # Extract bullet points for B (if any after SYKL-DEL B)
+            bullet_points_b = ""
+            bullet_points_b_match = re.search(r'SYKL-DEL B:.*?Bullet points:(.*?)(?=Tips|$)', response_text, re.DOTALL)
+            if bullet_points_b_match:
+                points = re.findall(r'-\s*"([^"]+)"', bullet_points_b_match.group(1))
+                bullet_points_b = "• " + "\n• ".join(points) if points else ""
+            else:
+                # If no specific bullet points for B, use A's points
+                bullet_points_b = bullet_points_a
             
             # Extract tips
             tips_match = re.search(r'Tips:\s*"([^"]+)"', response_text)
             tips = tips_match.group(1) if tips_match else ""
             tips_list = [tip.strip() for tip in tips.split('?') if tip.strip()]
             
-            # Create worksheet data
-            worksheet_data = {
+            # Create worksheet A
+            worksheets.append({
                 "title": title,
                 "materials": materials,
                 "sykl_del_type": "A",
                 "sykl_del_a": sykl_del_a,
-                "bullet_points": bullet_points_text,
+                "bullet_points": bullet_points_a,
                 "tips_1": (tips_list[0] + "?") if len(tips_list) > 0 else "",
                 "tips_2": (tips_list[1] + "?") if len(tips_list) > 1 else "",
                 "tips_3": (tips_list[2] + "?") if len(tips_list) > 2 else ""
-            }
+            })
             
-            # Generate PDF
-            try:
-                pdf_buffer = create_pdf(worksheet_data)
-                return send_file(
-                    pdf_buffer,
-                    mimetype='application/pdf',
-                    as_attachment=True,
-                    download_name=f"sykl_opgave_{title.lower().replace(' ', '_')}.pdf"
-                )
-            except Exception as e:
-                print(f"Error generating PDF: {str(e)}")
-                return jsonify({"error": f"Error generating PDF: {str(e)}"}), 500
+            # Create worksheet B
+            worksheets.append({
+                "title": title,
+                "materials": materials,
+                "sykl_del_type": "B",
+                "sykl_del_a": sykl_del_b,  # Use SYKL-DEL B content here
+                "bullet_points": bullet_points_b,
+                "tips_1": (tips_list[0] + "?") if len(tips_list) > 0 else "",
+                "tips_2": (tips_list[1] + "?") if len(tips_list) > 1 else "",
+                "tips_3": (tips_list[2] + "?") if len(tips_list) > 2 else ""
+            })
+            
+            # Generate PDFs for both worksheets
+            pdf_buffers = []
+            for worksheet in worksheets:
+                try:
+                    pdf_buffer = create_pdf(worksheet)
+                    pdf_buffers.append(pdf_buffer)
+                except Exception as e:
+                    print(f"Error generating PDF: {str(e)}")
+                    return jsonify({"error": f"Error generating PDF: {str(e)}"}), 500
+            
+            # Combine PDFs
+            output = BytesIO()
+            from PyPDF2 import PdfMerger
+            merger = PdfMerger()
+            for buffer in pdf_buffers:
+                merger.append(buffer)
+            merger.write(output)
+            output.seek(0)
+            
+            return send_file(
+                output,
+                mimetype='application/pdf',
+                as_attachment=True,
+                download_name=f"sykl_opgave_{title.lower().replace(' ', '_')}.pdf"
+            )
                 
         except Exception as e:
             print(f"Error generating content: {str(e)}")
